@@ -13,4 +13,6 @@ VastCast's goal is to create a simple, user-friendly design that integrates feat
 ## Android Benefits
 
 
-### [Home](https://mlpearson4.github.io/VastCast/) | [Deliverables](https://mlpearson4.github.io/VastCast/Deliverables.html) | [About Us](https://mlpearson4.github.io/VastCast/AboutUs.md)
+### [Home](https://mlpearson4.github.io/VastCast/) | [Deliverables html](https://mlpearson4.github.io/VastCast/Deliverables.html) | [About Us](https://mlpearson4.github.io/VastCast/AboutUs.md)
+
+### [Deliverables md](https://mlpearson4.github.io/VastCast/Deliverables.md)
