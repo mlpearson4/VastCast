@@ -1,3 +1,5 @@
+### [Home](https://mlpearson4.github.io/VastCast/) | [Deliverables](https://mlpearson4.github.io/VastCast/Deliverables.html) | [About Us](https://mlpearson4.github.io/VastCast/AboutUs.html)
+
 # Meet the Team!
 
 ## Raychel
@@ -8,7 +10,7 @@
 
 ## Michelle 
 
-![Michelle](https://pbs.twimg.com/media/DNPHyIFUEAE03Q5.jpg:small)
 I like nature and coding. Also red pandas. And queso.
+![Michelle](http://bit.ly/2Hjdx0n)
 
 ## Erika
