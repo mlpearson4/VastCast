@@ -15,4 +15,4 @@ VastCast's goal is to create a simple, user-friendly design that integrates feat
 
 ### Our [documentation](https://goo.gl/qK2xLA)
 
-#[Home](https://mlpearson4.github.io/VastCast/) | Deliverables | About Us
+# [Home](https://mlpearson4.github.io/VastCast/) | Deliverables | About Us
