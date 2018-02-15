@@ -1,6 +1,4 @@
 ---
-layout: blank
-title: Deliverables
 permalink: /Deliverables/
 ---
 
