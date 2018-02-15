@@ -10,7 +10,6 @@
 
 ## Michelle 
 
-I like nature and coding. Also red pandas. And queso.
-![Michelle](http://bit.ly/2Hjdx0n)
+![Michelle](http://bit.ly/2Hjdx0n) I like nature and coding. Also red pandas. And queso.
 
 ## Erika
