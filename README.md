@@ -13,4 +13,4 @@ VastCast's goal is to create a simple, user-friendly design that integrates feat
 ## Android Benefits
 
 
-### Our [documentation](https://goo.gl/rN9qKa)
+### Our [documentation](https://goo.gl/qK2xLA)
