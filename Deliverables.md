@@ -1,6 +1,5 @@
 ---
-theme: jekyll-theme-midnight
-layout: page
+layout: blank
 title: Deliverables
 permalink: /Deliverables/
 ---
