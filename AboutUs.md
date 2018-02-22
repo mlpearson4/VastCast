@@ -4,11 +4,14 @@
 
 ## Raychel
 
+![Raychel](goo.gl/4jTX8f)
+I enjoy programming and hula hooping, but not at the same time. I also enjoy space and terrible reality tv shows.
+
 ## Emma
 
 ## Riley
 
-## Michelle 
+## Michelle
 
 ![Michelle](http://bit.ly/2Hjdx0n) I like nature and coding. Also red pandas. And queso.
 
