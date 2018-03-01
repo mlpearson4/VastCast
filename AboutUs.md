@@ -11,7 +11,7 @@ I enjoy programming and hula hooping, but not at the same time. I also enjoy spa
 
 ## Riley
 
-![Riley](pictures/Riley.jpg)
+![Riley](pictures/Riley.jpg)  
 I have a wide range of interests including Philosophy, Buzz Lightyear, Guitar, Falconry, and Camping.
 
 ## Michelle
