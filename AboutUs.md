@@ -19,4 +19,5 @@ I like nature and coding. Also red pandas. And queso.
 ## Erika
 
 ![Erika](pictures/Erika.jpg) <!-- .element height="50%" width="50%" -->
+
 I love Texas, waffles, and Texas shaped waffles (look it up, it's a thing...)
