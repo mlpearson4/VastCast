@@ -17,3 +17,6 @@ I enjoy programming and hula hooping, but not at the same time. I also enjoy spa
 I like nature and coding. Also red pandas. And queso.
 
 ## Erika
+
+![Erika](https://drive.google.com/file/d/1BnXIFqRvaUydBshPwSZF8kO7yONeu1-l/view?usp=sharing)
+I love Texas, waffles, and Texas shaped waffles (look it up, it's a thing...)
