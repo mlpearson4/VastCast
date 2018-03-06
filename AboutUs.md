@@ -9,6 +9,9 @@ I enjoy programming and hula hooping, but not at the same time. I also enjoy spa
 
 ## Emma
 
+![Emma](http://bit.ly/2EZoVQE)
+I love reading and cats.
+
 ## Riley
 
 ![Riley](pictures/Riley.jpg)  
