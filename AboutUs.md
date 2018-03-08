@@ -12,7 +12,7 @@ I enjoy programming and hula hooping, but not at the same time. I also enjoy spa
 ![Emma](pictures/Emma.jpg)
 
 
-I love cats, reading, and existential jokes.
+I love reading, cats, and existential jokes.
 
 ## Riley
 
