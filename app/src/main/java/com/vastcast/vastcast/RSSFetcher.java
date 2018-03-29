@@ -28,6 +28,7 @@ public class RSSFetcher {
         //Log.d("RSS", "Began Fetching");
         InputStream in = source.openStream();
         XmlPullParser parser = Xml.newPullParser();
+        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         parser.setInput(in, null);
         parser.nextTag();
         Collection c = readRSS(parser, source);
@@ -69,19 +70,19 @@ public class RSSFetcher {
             String name = parser.getName();
             switch(name) {
                 case "title": {
-                    title = readTitle(parser);
+                    if(title == null) title = readTitle(parser);
                     break;
                 }
                 case "description": {
-                    description = readDescription(parser);
+                    if(description == null) description = readDescription(parser);
                     break;
                 }
                 case "image": {
-                    image = readImage(parser);
+                    if(image == null) image = readImage(parser);
                     break;
                 }
                 case "itunes:author": {
-                    author = readAuthor(parser);
+                    if(author == null) author = readAuthor(parser);
                     break;
                 }
                 case "item": {
