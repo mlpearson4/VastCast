@@ -4,4 +4,5 @@
     <string name="textViewUrlPrompt">Enter the URL for a podcast rss feed</string>
     <string name="txtUrl">URL</string>
     <string name="hintPodcastUrl">URL for a podcast RSS feed</string>
+    <string name="imgPodcast">Podcast Cover Image</string>
 </resources>

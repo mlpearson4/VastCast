@@ -1,8 +1,9 @@
 package com.vastcast.vastcast;
 
+import java.io.Serializable;
 import java.net.URL;
 
-public class Episode {
+public class Episode implements Serializable /*TODO: investigate alternatives*/ {
     private String title;
     private String description;
     private int season;

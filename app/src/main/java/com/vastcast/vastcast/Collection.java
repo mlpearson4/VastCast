@@ -1,9 +1,10 @@
 package com.vastcast.vastcast;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class Collection {
+public class Collection implements Serializable /*TODO: investigate alternatives*/ {
     private String title;
     private String description;
     private URL image;
