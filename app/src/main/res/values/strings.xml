@@ -5,4 +5,9 @@
     <string name="txtUrl">URL</string>
     <string name="hintPodcastUrl">URL for a podcast RSS feed</string>
     <string name="imgPodcast">Podcast Cover Image</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="Login">Log In</string>
+
 </resources>
