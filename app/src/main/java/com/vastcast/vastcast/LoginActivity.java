@@ -26,8 +26,8 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
 
-        Button button = (Button) findViewById(R.id.btnLogin);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button btnLogin = (Button) findViewById(R.id.btnLogin);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 LoginActivity.this.startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 pref.edit().putBoolean(LOGIN_KEY, true).apply();

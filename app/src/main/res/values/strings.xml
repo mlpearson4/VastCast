@@ -10,6 +10,9 @@
     <!-- Strings related to login -->
     <string name="Login">Log In</string>
 
+    <!-- Strings for manage fragment -->
+    <string name="addRSS">Add Podcast</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Fragment</string>
 
