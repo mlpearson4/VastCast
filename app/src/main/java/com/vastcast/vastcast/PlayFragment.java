@@ -1,13 +1,18 @@
 package com.vastcast.vastcast;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,7 +69,16 @@ public class PlayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_play, container, false);
+        View view = inflater.inflate(R.layout.fragment_play, container, false);
+
+        ImageButton btnQueue = (ImageButton) view.findViewById(R.id.btnQueue);
+        btnQueue.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                PlayFragment.this.startActivity(new Intent(getActivity(), QueueActivity.class));
+            }
+        });
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
