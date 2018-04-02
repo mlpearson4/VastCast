@@ -69,13 +69,6 @@ public class ManageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_manage, container, false);
 
-        Button btnRssFetch = (Button) view.findViewById(R.id.btnRSSFetch);
-        btnRssFetch.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ManageFragment.this.startActivity(new Intent(getActivity(), AddFeedActivity.class));
-            }
-        });
-
         return view;
     }
 

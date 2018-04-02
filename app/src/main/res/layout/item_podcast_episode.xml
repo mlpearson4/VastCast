@@ -9,12 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="start|center"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/colorAccent"
+        android:background="@color/activityBackground"
+        android:textColor="@color/textPrimary"
         android:text="" />
     <View
         android:layout_width="fill_parent"
-        android:layout_height="0.2dp"
+        android:layout_height="0.4dp"
         android:id="@+id/separator"
         android:visibility="visible"
         android:background="@color/colorPrimaryDark" />

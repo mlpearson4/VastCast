@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/activityBackground</item>
         <item name="android:textColorPrimary">@color/textPrimary</item>
+        <item name="android:textColorHint">@color/textHint</item>
         <item name="colorButtonNormal">@color/colorAccent</item>
     </style>
 
