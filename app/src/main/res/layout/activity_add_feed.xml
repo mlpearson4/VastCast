@@ -6,41 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".AddFeedActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="232dp"
-        android:layout_height="51dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="100dp"
-        android:text="@string/textViewUrlPrompt"
-        app:layout_constraintBottom_toTopOf="@+id/txtUrl"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
         android:id="@+id/txtUrl"
         android:layout_width="230dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="100dp"
+        android:layout_marginTop="400dp"
         android:ems="10"
         android:hint="@string/hintPodcastUrl"
         android:inputType="textUri"
-        android:text="@string/txtUrl"
         app:layout_constraintBottom_toTopOf="@+id/btnEnterUrl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnEnterUrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="164dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="464dp"
+        android:layout_marginTop="200dp"
         android:text="@string/btnEnter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
