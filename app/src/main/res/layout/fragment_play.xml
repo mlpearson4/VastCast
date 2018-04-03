@@ -1,51 +1,87 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.vastcast.vastcast.PlayFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/imgPlayPodcast"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="42dp"
+        android:layout_marginLeft="42dp"
+        android:layout_marginRight="42dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="33dp"
+        android:contentDescription="@string/imgPodcast"
+        app:layout_constraintBottom_toTopOf="@+id/textEpisodeTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:color/holo_blue_dark" />
+
+    <TextView
+        android:id="@+id/textEpisodeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="163dp"
+        android:layout_marginLeft="163dp"
+        android:layout_marginRight="163dp"
+        android:layout_marginStart="163dp"
+        android:gravity="center"
+        android:textColor="@color/textPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/audioStreamBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/audioStreamBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/btnQueue"
-        android:layout_marginEnd="26dp"
-        android:layout_marginRight="26dp"
-        android:text="Launch Streaming" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="33dp"
-        android:layout_gravity="bottom">
-
-
-
-        <ImageButton
-            android:id="@+id/btnQueue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:src="@android:drawable/arrow_up_float" />
-    </RelativeLayout>
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="148dp"
+        android:layout_marginLeft="148dp"
+        android:layout_marginRight="148dp"
+        android:layout_marginStart="148dp"
+        android:text="@string/playMedia"
+        android:enabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="298dp"
-        android:layout_height="22dp"
-        android:layout_marginBottom="60dp"
-        android:layout_marginEnd="38dp"
-        android:layout_marginStart="38dp"
-        android:layout_marginTop="46dp"
+        android:layout_height="27dp"
+        android:layout_marginBottom="47dp"
+        android:layout_marginEnd="43dp"
+        android:layout_marginLeft="43dp"
+        android:layout_marginRight="43dp"
+        android:layout_marginStart="43dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnQueue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnQueue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="172dp"
+        android:layout_marginLeft="173dp"
+        android:layout_marginRight="172dp"
+        android:layout_marginStart="173dp"
+        android:contentDescription="@string/queueDescription"
+        android:src="@android:drawable/arrow_up_float"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/audioStreamBtn" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>

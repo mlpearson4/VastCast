@@ -18,7 +18,6 @@ import android.widget.TextView;
 import java.net.URL;
 
 public class DetailActivity extends AppCompatActivity {
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -76,17 +75,18 @@ public class DetailActivity extends AppCompatActivity {
             return new ViewHolder(v);
         }
 
-        public void onBindViewHolder(ViewHolder holder, final int position) {
+        public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.textView.setText(podcast.getEpisodes().get(position).getTitle());
             holder.textView.setOnClickListener( new View.OnClickListener() {
                 public void onClick(View view) {
-                    String title = podcast.getEpisodes().get(position).getTitle();
+                    String title = podcast.getEpisodes().get(holder.getAdapterPosition()).getTitle();
                     Log.d("DetailActivity", "Clicked on Episode: " + title);
                     //Below should allow for passing of data needed to play episodes
-                    /*Intent i = new Intent(DetailActivity.this, PlayActivity.class);
+                    Intent i = new Intent(DetailActivity.this, MainActivity.class);
+                    i.putExtra("toPlay", true);
                     i.putExtra("currentPlaylist", podcast);
-                    i.putExtra("currentEpisodeLink", podcast.getEpisodes().get(position).getLink());
-                    DetailActivity.this.startActivity(i);*/
+                    i.putExtra("currentEpisode", podcast.getEpisodes().get(holder.getAdapterPosition()));
+                    DetailActivity.this.startActivity(i);
                 }
             });
         }

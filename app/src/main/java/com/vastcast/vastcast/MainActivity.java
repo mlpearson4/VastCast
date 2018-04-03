@@ -6,55 +6,26 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.net.Uri;
 
-public class MainActivity extends AppCompatActivity
-        implements  HomeFragment.OnFragmentInteractionListener,
-                    PlayFragment.OnFragmentInteractionListener,
-                    ManageFragment.OnFragmentInteractionListener{
-
+public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Home"));
-        tabLayout.addTab(tabLayout.newTab().setText("Play"));
-        tabLayout.addTab(tabLayout.newTab().setText("Manage"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        final PagerAdapter adapter = new PagerAdapter
-                (getSupportFragmentManager(), tabLayout.getTabCount());
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        ViewPager viewPager = findViewById(R.id.pager);
+        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getContext(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
+        tabLayout.setupWithViewPager(viewPager);
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-
-
-
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri){
-        //use this to communicate between fragments
+        Intent i = getIntent();
+        //when started with the intent to play an episode
+        if(i.hasExtra("toPlay")) {
+            Episode e = (Episode) i.getSerializableExtra("currentEpisode");
+            Collection c = (Collection) i.getSerializableExtra("currentPlaylist");
+            adapter.setPlayArguments(e, c);
+            viewPager.setCurrentItem(1);
+        }
     }
 }

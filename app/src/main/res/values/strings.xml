@@ -15,5 +15,11 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Fragment</string>
+    <string name="playMedia">Play</string>
+    <string name="pauseMedia">Pause</string>
+    <string name="queueDescription">Open Queue</string>
+    <string name="homeTab">Home</string>
+    <string name="playTab">Play</string>
+    <string name="manageTab">Manage</string>
 
 </resources>

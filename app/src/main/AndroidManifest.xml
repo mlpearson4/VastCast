@@ -28,7 +28,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_login" />
-        <activity android:name=".QueueActivity"></activity>
+        <activity android:name=".QueueActivity" />
     </application>
 
 </manifest>

@@ -1,42 +1,54 @@
 package com.vastcast.vastcast;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-/**
- * This class manages the tab fragments
- */
+public class PagerAdapter extends FragmentStatePagerAdapter {
+    private Context context;
+    private int numTabs;
+    private Episode episode = null;
+    private Collection collection = null;
 
-public class PagerAdapter  extends FragmentStatePagerAdapter {
-    int mNumOfTabs;
-
-    public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+    public PagerAdapter(FragmentManager fm, Context context, int numTabs) {
         super(fm);
-        this.mNumOfTabs = NumOfTabs;
+        this.context = context;
+        this.numTabs = numTabs;
     }
 
-    @Override
-    public Fragment getItem(int position) {
-
+    public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                HomeFragment tab1 = new HomeFragment();
-                return tab1;
+                return context.getString(R.string.homeTab);
             case 1:
-                PlayFragment tab2 = new PlayFragment();
-                return tab2;
+                return context.getString(R.string.playTab);
             case 2:
-                ManageFragment tab3 = new ManageFragment();
-                return tab3;
+                return context.getString(R.string.manageTab);
             default:
                 return null;
         }
     }
 
-    @Override
+    public Fragment getItem(int position) {
+        switch (position) {
+            case 0:
+                return new HomeFragment();
+            case 1:
+                return PlayFragment.newInstance(episode, collection);
+            case 2:
+                return new ManageFragment();
+            default:
+                return null;
+        }
+    }
+
+    public void setPlayArguments(Episode e, Collection c) {
+        this.episode = e;
+        this.collection = c;
+    }
+
     public int getCount() {
-        return mNumOfTabs;
+        return numTabs;
     }
 }
-

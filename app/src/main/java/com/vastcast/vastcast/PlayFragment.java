@@ -1,11 +1,11 @@
 package com.vastcast.vastcast;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,35 +13,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.io.IOException;
+import java.net.URL;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PlayFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PlayFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PlayFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-
     Boolean playing = false;
     Boolean initialStage = true;
     MediaPlayer mediaPlayer;
@@ -49,98 +31,72 @@ public class PlayFragment extends Fragment {
     Button audio;
     Handler handler;
     Runnable runnable;
-    //ImageView album;
-    //ProgressDialog progressDialog;
-    String url;
+    URL image = null;
+    URL source = null;
 
-    private OnFragmentInteractionListener mListener;
-
-    public PlayFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PlayFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PlayFragment newInstance(String param1, String param2) {
+    public static PlayFragment newInstance(Episode e, Collection c) {
         PlayFragment fragment = new PlayFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("episode", e);
+        bundle.putSerializable("collection", c);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_play, container, false);
 
-        ImageButton btnQueue = (ImageButton) view.findViewById(R.id.btnQueue);
+        Bundle arguments = getArguments();
 
-        url = "http://leopard.megaphone.fm/PPY7869295725.mp3";
+        if(arguments != null) {
+            Collection c = (Collection) getArguments().getSerializable("collection");
+            if(c != null) image = c.getImage();
+        }
+        if(image != null) {
+            ImageView imgPlayPodcast = view.findViewById(R.id.imgPlayPodcast);
+            new LoadImageTask(imgPlayPodcast).execute(image);
+        }
 
-        //album = (ImageView) findViewById(R.id.image);
-        //need to handle image loading
-        audio = (Button) view.findViewById(R.id.audioStreamBtn);
-        //audio = (Button) view.findViefwById(R.id.audioStreamBtn);
-        //progressDialog = new ProgressDialog(getContext());
         handler = new Handler();
-        seekBar = (SeekBar) view.findViewById(R.id.seekBar);
-
+        seekBar = view.findViewById(R.id.seekBar);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        //new Player().execute(url);
-        //seekBar.setMax(mediaPlayer.getDuration());
-        //playCycle();
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean input) {
                 if (input){
                     mediaPlayer.seekTo(progress);
                 }
             }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
 
+        audio = view.findViewById(R.id.audioStreamBtn);
+        try {
+            source = new URL("http://leopard.megaphone.fm/PPY7869295725.mp3");
+        }
+        catch(Exception e) {
+            Log.e("PlayFragment", Log.getStackTraceString(e));
+        }
+
+
+        if(arguments != null) {
+            Episode e = (Episode) getArguments().getSerializable("episode");
+            if(e != null) {
+                TextView title = view.findViewById(R.id.textEpisodeTitle);
+                title.setText(e.getTitle());
+                source = e.getLink();
+                audio.setEnabled(true);
+            }
+        }
         audio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!playing){
-                    audio.setText("Pause");
                     if (initialStage){
-                        new Player().execute(url);
+                        new Player().execute(source);
                     }
                     else{
                         if (!mediaPlayer.isPlaying()) {
@@ -148,18 +104,20 @@ public class PlayFragment extends Fragment {
                             mediaPlayer.start();
                         }
                     }
+                    audio.setText(R.string.pauseMedia);
                     playing = true;
                 }
                 else{
-                    audio.setText("Play");
                     if (mediaPlayer.isPlaying()){
                         mediaPlayer.pause();
                     }
+                    audio.setText(R.string.playMedia);
                     playing = false;
                 }
             }
         });
 
+        ImageButton btnQueue = view.findViewById(R.id.btnQueue);
         btnQueue.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 PlayFragment.this.startActivity(new Intent(getActivity(), QueueActivity.class));
@@ -168,46 +126,6 @@ public class PlayFragment extends Fragment {
 
         return view;
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
 
     @Override
     public void onPause(){
@@ -233,23 +151,50 @@ public class PlayFragment extends Fragment {
         }
 
     }
+    class LoadImageTask extends AsyncTask<URL, Void, Bitmap> {
+        private Exception e;
+        ImageView imgPodcast;
 
-    class Player extends AsyncTask<String, Void, Boolean> {
+        LoadImageTask(ImageView imgPodcast) {
+            this.imgPodcast = imgPodcast;
+        }
+
+        protected Bitmap doInBackground(URL... urls) {
+            try {
+                return BitmapFactory.decodeStream(urls[0].openStream());
+            } catch (Exception e) {
+                this.e = e;
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Bitmap bitmap) {
+            if(e != null) {
+                //Handle errors in loading an image
+                Log.e("PlayFragment", Log.getStackTraceString(e));
+            }
+            else {
+                imgPodcast.setImageBitmap(bitmap);
+            }
+        }
+    }
+
+    class Player extends AsyncTask<URL, Void, Boolean> {
         ProgressDialog progressDialog;
 
         @Override
-        protected Boolean doInBackground(String... strings){
-            Boolean prepared = false;
+        protected Boolean doInBackground(URL... urls){
+            Boolean prepared;
 
             try{
-                mediaPlayer.setDataSource(strings[0]);
+                mediaPlayer.setDataSource(urls[0].getPath());
                 //seekBar.setMax(mediaPlayer.getDuration());
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion (MediaPlayer mediaPlayer){
                         initialStage = true;
                         playing = false;
-                        audio.setText("Launch Streaming");
+                        audio.setText(R.string.playMedia);
                         mediaPlayer.stop();
                         mediaPlayer.reset();
                     }
@@ -260,13 +205,13 @@ public class PlayFragment extends Fragment {
                     seekBar.setMax(mediaPlayer.getDuration());
                     playCycle();
                 } catch(IOException e){
-                    e.printStackTrace();
+                    Log.e("PlayFragment", Log.getStackTraceString(e));
                 }
                 prepared = true;
 
             }
             catch(Exception e){
-                Log.e("MyAudioStreamingApp", e.getMessage());
+                Log.e("PlayFragment", Log.getStackTraceString(e));
                 prepared = false;
             }
             return prepared;
@@ -291,8 +236,5 @@ public class PlayFragment extends Fragment {
             progressDialog.setMessage("Buffering...");
             progressDialog.show();
         }
-
     }
-
-
 }

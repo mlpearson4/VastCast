@@ -33,6 +33,10 @@ public class Episode implements Serializable /*TODO: investigate alternatives*/ 
         return episode;
     }
 
+    public int getSeason() {
+        return season;
+    }
+
     public int getDuration() {
         return duration;
     }

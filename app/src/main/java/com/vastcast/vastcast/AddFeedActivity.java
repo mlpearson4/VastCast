@@ -12,7 +12,6 @@ import android.widget.EditText;
 import java.net.URL;
 
 public class AddFeedActivity extends AppCompatActivity {
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_feed);
@@ -31,8 +30,6 @@ public class AddFeedActivity extends AppCompatActivity {
     class RetrieveFeedTask extends AsyncTask<String, Void, Collection> {
         private Exception e = null;
 
-        //protected void onPreExecute() {}
-
         protected Collection doInBackground(String... urls) {
             try {
                 URL source = new URL(urls[0]);
@@ -49,7 +46,6 @@ public class AddFeedActivity extends AppCompatActivity {
                 Log.e("RSS", Log.getStackTraceString(e));
             }
             else {
-                /*TODO: Launch new activity with the resulting podcast details*/
                 Intent i = new Intent(AddFeedActivity.this, DetailActivity.class);
                 i.putExtra("podcast", c);
                 AddFeedActivity.this.startActivity(i);
