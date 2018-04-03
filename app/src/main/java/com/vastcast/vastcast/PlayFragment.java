@@ -184,35 +184,49 @@ public class PlayFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(URL... urls){
-            Boolean prepared;
-
-            try{
+            Boolean prepared = false;
+//
+//            try {
+//                mediaPlayer.setDataSource(urls[0].getPath());
+//                prepared = true;
+//                //seekBar.setMax(mediaPlayer.getDuration());
+////                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+////                    @Override
+////                    public void onCompletion (MediaPlayer mediaPlayer){
+////                        initialStage = true;
+////                        playing = false;
+////                        audio.setText(R.string.playMedia);
+////                        mediaPlayer.stop();
+////                        mediaPlayer.reset();
+////                    }
+////                });
+//            } catch(Exception e) {
+//                Log.e("PlayFragment", Log.getStackTraceString(e));
+//                prepared = false;
+//            }
+//            if(prepared) {
+//                try{
+//                    mediaPlayer.prepare();
+//                    seekBar.setMax(mediaPlayer.getDuration());
+//                    playCycle();
+//                } catch(IOException e){
+//                    Log.e("PlayFragment", Log.getStackTraceString(e));
+//                }
+//            }
+//            return prepared;
+            try {
                 mediaPlayer.setDataSource(urls[0].getPath());
-                //seekBar.setMax(mediaPlayer.getDuration());
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
-                    public void onCompletion (MediaPlayer mediaPlayer){
-                        initialStage = true;
-                        playing = false;
-                        audio.setText(R.string.playMedia);
-                        mediaPlayer.stop();
-                        mediaPlayer.reset();
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+                        mediaPlayer.start();
                     }
                 });
-
-                try{
-                    mediaPlayer.prepare();
-                    seekBar.setMax(mediaPlayer.getDuration());
-                    playCycle();
-                } catch(IOException e){
-                    Log.e("PlayFragment", Log.getStackTraceString(e));
-                }
+                mediaPlayer.prepareAsync();
                 prepared = true;
-
-            }
-            catch(Exception e){
-                Log.e("PlayFragment", Log.getStackTraceString(e));
+            } catch(Exception e) {
                 prepared = false;
+                Log.e("PlayFragment", Log.getStackTraceString(e));
             }
             return prepared;
         }
@@ -224,9 +238,9 @@ public class PlayFragment extends Fragment {
             if(progressDialog.isShowing()){
                 progressDialog.cancel();
             }
-            initialStage = false;
-            mediaPlayer.start();
-            playCycle();
+//            initialStage = false;
+//            mediaPlayer.start();
+//            playCycle();
         }
 
         @Override
