@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "969725536109",
+    "firebase_url": "https://vastcast-5856e.firebaseio.com",
+    "project_id": "vastcast-5856e",
+    "storage_bucket": "vastcast-5856e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969725536109:android:06d826f4a8779119",
+        "android_client_info": {
+          "package_name": "com.vastcast.vastcast"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "969725536109-pn1acn67th649sv93jvqher3q33ho2ff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vastcast.vastcast",
+            "certificate_hash": "a29006b8384b332fce120ebdc33e2228119eb275"
+          }
+        },
+        {
+          "client_id": "969725536109-u1mcg2kb6qmm7nergavjvln48c84ilk0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClE00tHtROb6lwWEGgRo5uxmvl57y0jyk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "969725536109-u1mcg2kb6qmm7nergavjvln48c84ilk0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
