@@ -19,7 +19,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 import java.io.IOException;
 import java.net.URL;
 
@@ -74,12 +73,13 @@ public class PlayFragment extends Fragment {
 
 
         audio = view.findViewById(R.id.audioStreamBtn);
-        try {
+        /*try {
             source = new URL("http://leopard.megaphone.fm/PPY7869295725.mp3");
         }
         catch(Exception e) {
             Log.e("PlayFragment", Log.getStackTraceString(e));
-        }
+        }*/
+
 
 
         if(arguments != null) {
@@ -91,6 +91,7 @@ public class PlayFragment extends Fragment {
                 audio.setEnabled(true);
             }
         }
+        Log.d("Play", "source: " + source);
         audio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,62 +186,63 @@ public class PlayFragment extends Fragment {
         @Override
         protected Boolean doInBackground(URL... urls){
             Boolean prepared = false;
-//
-//            try {
-//                mediaPlayer.setDataSource(urls[0].getPath());
-//                prepared = true;
-//                //seekBar.setMax(mediaPlayer.getDuration());
-////                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-////                    @Override
-////                    public void onCompletion (MediaPlayer mediaPlayer){
-////                        initialStage = true;
-////                        playing = false;
-////                        audio.setText(R.string.playMedia);
-////                        mediaPlayer.stop();
-////                        mediaPlayer.reset();
-////                    }
-////                });
-//            } catch(Exception e) {
-//                Log.e("PlayFragment", Log.getStackTraceString(e));
-//                prepared = false;
-//            }
-//            if(prepared) {
-//                try{
-//                    mediaPlayer.prepare();
-//                    seekBar.setMax(mediaPlayer.getDuration());
-//                    playCycle();
-//                } catch(IOException e){
-//                    Log.e("PlayFragment", Log.getStackTraceString(e));
-//                }
-//            }
-//            return prepared;
+            //mediaPlayer.reset();
             try {
-                mediaPlayer.setDataSource(urls[0].getPath());
-                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                Log.d("Play", "source url: " + urls[0].getPath());
+
+                String source = urls[0].toString();
+
+                mediaPlayer.setDataSource(source);
+
+                //mediaPlayer.setDataSource(urls[0].getPath());
+
+                prepared = false;
+                //seekBar.setMax(mediaPlayer.getDuration());
+
+
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
-                    public void onPrepared(MediaPlayer mediaPlayer) {
-                        mediaPlayer.start();
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        initialStage = true;
+                        playing = false;
+                        audio.setText(R.string.playMedia);
+                        mediaPlayer.stop();
+                        mediaPlayer.reset();
                     }
                 });
-                mediaPlayer.prepareAsync();
-                prepared = true;
-            } catch(Exception e) {
+
+
+                try {
+                    mediaPlayer.prepare();
+                    //seekBar.setMax(mediaPlayer.getDuration());
+                    //playCycle();
+                    prepared = true;
+
+                } catch (IOException e) {
+                    Log.e("PlayFragment", Log.getStackTraceString(e));
+                }
+
+            }catch(IOException e){
+                e.printStackTrace();
                 prepared = false;
-                Log.e("PlayFragment", Log.getStackTraceString(e));
             }
             return prepared;
+
         }
 
         @Override
         protected void onPostExecute(Boolean aBoolean){
             super.onPostExecute(aBoolean);
 
+            seekBar.setMax(mediaPlayer.getDuration());
+            playCycle();
+
             if(progressDialog.isShowing()){
                 progressDialog.cancel();
             }
-//            initialStage = false;
-//            mediaPlayer.start();
-//            playCycle();
+           initialStage = false;
+            mediaPlayer.start();
+            playCycle();
         }
 
         @Override
