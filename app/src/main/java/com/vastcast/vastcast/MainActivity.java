@@ -13,8 +13,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class MainActivity extends AppCompatActivity {
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference myRef = database.getReference();
+    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef = mDatabase.getReference();
     private StorageReference mStorageRef;
 
     protected void onCreate(Bundle savedInstanceState) {
