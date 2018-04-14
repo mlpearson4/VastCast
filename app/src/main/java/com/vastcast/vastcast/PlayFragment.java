@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +43,7 @@ public class PlayFragment extends Fragment {
         return fragment;
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_play, container, false);
 
         Bundle arguments = getArguments();
@@ -71,16 +72,7 @@ public class PlayFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-
         audio = view.findViewById(R.id.audioStreamBtn);
-        /*try {
-            source = new URL("http://leopard.megaphone.fm/PPY7869295725.mp3");
-        }
-        catch(Exception e) {
-            Log.e("PlayFragment", Log.getStackTraceString(e));
-        }*/
-
-
 
         if(arguments != null) {
             Episode e = (Episode) getArguments().getSerializable("episode");
@@ -185,7 +177,7 @@ public class PlayFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(URL... urls){
-            Boolean prepared = false;
+            Boolean prepared;
             //mediaPlayer.reset();
             try {
                 Log.d("Play", "source url: " + urls[0].getPath());

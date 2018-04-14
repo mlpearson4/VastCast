@@ -10,20 +10,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="189dp"
-        android:layout_marginEnd="148dp"
-        android:layout_marginStart="148dp"
-        android:layout_marginTop="330dp"
+        android:layout_marginBottom="400dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginRight="200dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="400dp"
         android:text="@string/Login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    
-    <!--com.google.android.gms.common.SignInButton
- android:id="@+id/sign_in_button"
- android:layout_width="wrap_content"
- android:layout_height="wrap_content" /-->
 
 </android.support.constraint.ConstraintLayout>

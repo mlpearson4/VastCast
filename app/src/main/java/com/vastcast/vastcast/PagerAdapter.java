@@ -20,7 +20,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return context.getString(R.string.homeTab);
+                return context.getString(R.string.discoverTab);
             case 1:
                 return context.getString(R.string.playTab);
             case 2:
@@ -33,7 +33,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new HomeFragment();
+                return new DiscoverFragment();
             case 1:
                 return PlayFragment.newInstance(episode, collection);
             case 2:

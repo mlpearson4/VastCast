@@ -1,11 +1,14 @@
 package com.vastcast.vastcast;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -20,10 +23,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
-        ViewPager viewPager = findViewById(R.id.pager);
+        ViewPager viewPager = findViewById(R.id.pagerMain);
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getContext(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -35,6 +38,22 @@ public class MainActivity extends AppCompatActivity {
             Collection c = (Collection) i.getSerializableExtra("currentPlaylist");
             adapter.setPlayArguments(e, c);
             viewPager.setCurrentItem(1);
+        }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_settings, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                //launch settings with an intent
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

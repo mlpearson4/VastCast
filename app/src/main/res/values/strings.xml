@@ -18,8 +18,9 @@
     <string name="playMedia">Play</string>
     <string name="pauseMedia">Pause</string>
     <string name="queueDescription">Open Queue</string>
-    <string name="homeTab">Home</string>
+    <string name="discoverTab">Discover</string>
     <string name="playTab">Play</string>
     <string name="manageTab">Manage</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
