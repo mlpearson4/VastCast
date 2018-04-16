@@ -1,20 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-    <TextView
-        android:id="@+id/txtEpisodeTitle"
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="start|center"
-        android:background="@color/activityBackground"
-        android:textColor="@color/textPrimary"
-        android:text="" />
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="0.4dp"
-        android:id="@+id/separator"
-        android:visibility="visible"
-        android:background="@color/colorPrimaryDark" />
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/ibLeftEpisode"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/activityBackground"
+            app:layout_constraintBottom_toTopOf="@+id/separator"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/arrow_up_float" />
+
+        <TextView
+            android:id="@+id/txtEpisodeTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/activityBackground"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="start|center"
+            android:marqueeRepeatLimit="1"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/textPrimary"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/imgDownloadStatus"
+            app:layout_constraintStart_toEndOf="@+id/ibLeftEpisode"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imgDownloadStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtEpisodeTitle"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintEnd_toStartOf="@+id/ibRightEpisode"
+            app:layout_constraintStart_toEndOf="@+id/txtEpisodeTitle"
+            app:layout_constraintTop_toTopOf="@+id/txtEpisodeTitle" />
+
+        <TextView
+            android:id="@+id/txtCurrentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="0:00"
+            android:textColor="@color/textPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ibLeftEpisode"
+            app:layout_constraintTop_toBottomOf="@+id/txtEpisodeTitle" />
+
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textColor="@color/textPrimary"
+            app:layout_constraintEnd_toStartOf="@+id/txtTotalTime"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/txtCurrentTime"
+            app:layout_constraintTop_toBottomOf="@+id/txtEpisodeTitle" />
+
+        <TextView
+            android:id="@+id/txtTotalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/textPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ibRightEpisode"
+            app:layout_constraintTop_toBottomOf="@+id/txtEpisodeTitle" />
+
+        <ImageButton
+            android:id="@+id/ibRightEpisode"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/activityBackground"
+            app:layout_constraintBottom_toTopOf="@+id/separator"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_more_vert_24dp" />
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorPrimaryDark"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtDate" />
+
+    </android.support.constraint.ConstraintLayout>
+
 </LinearLayout>

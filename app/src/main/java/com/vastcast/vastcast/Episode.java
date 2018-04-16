@@ -41,6 +41,12 @@ public class Episode implements Serializable /*TODO: investigate alternatives*/ 
         return duration;
     }
 
+    public String getDurationText() {
+        int seconds = duration % 60;
+        int minutes = duration / 60;
+        return Integer.toString(minutes) + ":" + String.format("%02d", seconds);
+    }
+
     public URL getLink() {
         return link;
     }
