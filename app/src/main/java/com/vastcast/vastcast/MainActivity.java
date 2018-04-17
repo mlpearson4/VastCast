@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         ViewPager viewPager = findViewById(R.id.pagerMain);
+        viewPager.addOnPageChangeListener(new CircularOnPageChangeListener(viewPager)); //comment out this line to remove circular tabs
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getContext(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -54,6 +55,32 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    class CircularOnPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
+        private ViewPager viewPager;
+        private int lastState;
+
+        public CircularOnPageChangeListener(final ViewPager viewPager) {
+            this.viewPager = viewPager;
+        }
+
+        @Override
+        public void onPageScrollStateChanged(final int state) {
+            int currentPosition = viewPager.getCurrentItem();
+            int lastPosition = viewPager.getAdapter().getCount() - 1;
+            if(currentPosition == 0 || currentPosition == lastPosition) {
+                if(state == ViewPager.SCROLL_STATE_IDLE && lastState == ViewPager.SCROLL_STATE_DRAGGING) {
+                    if(currentPosition == 0) {
+                        viewPager.setCurrentItem(lastPosition, false);
+                    }
+                    else {
+                        viewPager.setCurrentItem(0, false);
+                    }
+                }
+                lastState = state;
+            }
         }
     }
 }
