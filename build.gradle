@@ -17,9 +17,6 @@ allprojects {
         options.deprecation = true
     }
     repositories {
-        maven {
-            url "https://maven.google.com" // Google's Maven repository
-        }
         google()
         jcenter()
     }
