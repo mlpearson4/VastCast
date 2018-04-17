@@ -4,7 +4,7 @@
 
 ## Raychel
 
-![Raychel](http://bit.ly/2CcDD65)  
+![Raychel](pictures/Raychel.jpg)  
 I enjoy programming and hula hooping, but not at the same time. I also enjoy space and terrible reality tv shows.
 
 ## Emma
