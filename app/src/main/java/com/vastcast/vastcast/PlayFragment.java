@@ -21,6 +21,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+//http://feeds.feedburner.com/mbmbam
+
 
 public class PlayFragment extends Fragment {
     Boolean playing = false;
@@ -32,6 +36,8 @@ public class PlayFragment extends Fragment {
     Runnable runnable;
     URL image = null;
     URL source = null;
+    TextView current;
+    TextView total;
 
     public static PlayFragment newInstance(Episode e, Collection c) {
         PlayFragment fragment = new PlayFragment();
@@ -58,8 +64,12 @@ public class PlayFragment extends Fragment {
 
         handler = new Handler();
         seekBar = view.findViewById(R.id.seekBar);
+        current = (TextView) view.findViewById(R.id.current);
+        total = (TextView) view.findViewById(R.id.total);
+
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean input) {
@@ -128,7 +138,7 @@ public class PlayFragment extends Fragment {
         return view;
     }
 
-    @Override
+    /*@Override
     public void onPause(){
         super.onPause();
 
@@ -137,7 +147,7 @@ public class PlayFragment extends Fragment {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-    }
+    }*/
 
     public void playCycle(){
         seekBar.setProgress(mediaPlayer.getCurrentPosition());
@@ -180,6 +190,49 @@ public class PlayFragment extends Fragment {
         }
     }
 
+    class Time extends AsyncTask<String, Void, Boolean>{
+        @Override
+        protected Boolean doInBackground(String... strings){
+            Boolean prepared = false;
+            int milliseconds;
+            while(mediaPlayer != null){
+                milliseconds = mediaPlayer.getCurrentPosition();
+                /*if (mediaPlayer.getDuration() > 360000){
+                    current.setText(String.format("%d:%02d:%02d",
+                            TimeUnit.MILLISECONDS.toHours(milliseconds),
+                            TimeUnit.MILLISECONDS.toMinutes(milliseconds) -
+                                    TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds)),
+                            TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                                    TimeUnit.HOURS.toSeconds(TimeUnit.MILLISECONDS.toHours(milliseconds)) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds))
+                    ));
+
+                }
+                else {*/
+                    current.setText(String.format("%d:%02d",
+                            TimeUnit.MILLISECONDS.toMinutes(milliseconds),
+                            TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds))
+                    ));
+               // }
+                //seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                if (mediaPlayer.isPlaying()){
+
+                    seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                    /*runnable = new Runnable(){
+                        @Override
+                        public void run(){
+                            playCycle();
+                        }
+                    };*/
+                    handler.postDelayed(runnable, 1000);
+                }
+            }
+            return prepared;
+        }
+
+    }
+
     class Player extends AsyncTask<URL, Void, Boolean> {
         ProgressDialog progressDialog;
 
@@ -194,7 +247,6 @@ public class PlayFragment extends Fragment {
 
                 mediaPlayer.setDataSource(source);
 
-                //mediaPlayer.setDataSource(urls[0].getPath());
 
                 prepared = false;
                 //seekBar.setMax(mediaPlayer.getDuration());
@@ -234,8 +286,33 @@ public class PlayFragment extends Fragment {
         protected void onPostExecute(Boolean aBoolean){
             super.onPostExecute(aBoolean);
 
+            //seekBar.setMax(mediaPlayer.getDuration());
+            //playCycle();
+
+            int milliseconds = mediaPlayer.getDuration();
+            Log.d("TIME_SET", "in seconds" + TimeUnit.MILLISECONDS.toSeconds(milliseconds));
+            Log.d("TIME_SET", "in hours" + TimeUnit.HOURS.toSeconds(TimeUnit.MILLISECONDS.toHours(milliseconds)));
+            Log.d("TIME_SET", "in minutes" + TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
+            /*if (milliseconds > 3600000){
+                total.setText(String.format("%d:%02d:%02d",
+                        TimeUnit.MILLISECONDS.toHours(milliseconds),
+                        TimeUnit.MILLISECONDS.toMinutes(milliseconds) -
+                                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds)),
+                        TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                                (TimeUnit.MILLISECONDS.)
+
+
+                ));
+            }
+            else {*/
+                total.setText(String.format("%d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(milliseconds),
+                        TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds))
+                ));
+            //}
             seekBar.setMax(mediaPlayer.getDuration());
-            playCycle();
+            new Time().execute();
 
             if(progressDialog.isShowing()){
                 progressDialog.cancel();
