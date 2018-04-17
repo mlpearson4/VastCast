@@ -124,7 +124,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:gravity="left"
-        android:text="0:00"
+        android:text=""
         android:textColor="@color/textPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/seekBar" />
@@ -217,36 +217,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tabQueue" />
-
-    <TextView
-        android:id="@+id/current"
-        android:layout_width="108dp"
-        android:layout_height="19dp"
-        android:layout_marginBottom="71dp"
-        android:layout_marginEnd="167dp"
-        android:layout_marginStart="40dp"
-        android:text=""
-        android:textColor="@color/textPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/total"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/total"
-        android:layout_width="92dp"
-        android:layout_height="22dp"
-        android:layout_marginBottom="71dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginStart="167dp"
-        android:text=""
-        android:textColor="@color/textPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/current"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar"
-        app:layout_constraintVertical_bias="0.0" />
 
 </android.support.constraint.ConstraintLayout>
