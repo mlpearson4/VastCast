@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#828A8F</color>
+    <color name="colorPrimary">#828a8f</color>
     <color name="colorPrimaryDark">#565656</color>
     <color name="colorAccent">#9E1B32</color>
     <color name="activityBackground">#202020</color>
-    <color name="textPrimary">#FFFFFF</color>
+    <color name="textPrimary">#ffffff</color>
     <color name="textHint">#808080</color>
 </resources>

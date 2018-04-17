@@ -9,16 +9,17 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.util.Log;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +32,7 @@ public class PlayFragment extends Fragment {
     Boolean initialStage = true;
     MediaPlayer mediaPlayer;
     SeekBar seekBar;
-    Button audio;
+    ImageButton audio;
     Handler handler;
     Runnable runnable;
     URL image = null;
@@ -48,17 +49,22 @@ public class PlayFragment extends Fragment {
         return fragment;
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_play, container, false);
 
         Bundle arguments = getArguments();
 
         if(arguments != null) {
             Collection c = (Collection) getArguments().getSerializable("collection");
-            if(c != null) image = c.getImage();
+            if(c != null) {
+                image = c.getImage();
+                TextView txtPodcastName = view.findViewById(R.id.txtPodcastName);
+                txtPodcastName.setText(c.getTitle());
+                txtPodcastName.setSelected(true);
+            }
         }
         if(image != null) {
-            ImageView imgPlayPodcast = view.findViewById(R.id.imgPlayPodcast);
+            ImageView imgPlayPodcast = view.findViewById(R.id.imgPlayingPodcast);
             new LoadImageTask(imgPlayPodcast).execute(image);
         }
 
@@ -81,22 +87,16 @@ public class PlayFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-
-        audio = view.findViewById(R.id.audioStreamBtn);
-        /*try {
-            source = new URL("http://leopard.megaphone.fm/PPY7869295725.mp3");
-        }
-        catch(Exception e) {
-            Log.e("PlayFragment", Log.getStackTraceString(e));
-        }*/
-
-
-
+        audio = view.findViewById(R.id.btnPlayPause);
+        audio.setEnabled(false);
         if(arguments != null) {
             Episode e = (Episode) getArguments().getSerializable("episode");
             if(e != null) {
-                TextView title = view.findViewById(R.id.textEpisodeTitle);
-                title.setText(e.getTitle());
+                TextView txtEpisodeTitle = view.findViewById(R.id.txtEpisodeTitle);
+                txtEpisodeTitle.setText(e.getTitle());
+                txtEpisodeTitle.setSelected(true);
+                TextView txtTotalTime = view.findViewById(R.id.txtTotalTime);
+                txtTotalTime.setText(e.getDurationText());
                 source = e.getLink();
                 audio.setEnabled(true);
             }
@@ -115,14 +115,14 @@ public class PlayFragment extends Fragment {
                             mediaPlayer.start();
                         }
                     }
-                    audio.setText(R.string.pauseMedia);
+                    audio.setImageResource(R.drawable.ic_pause_24dp);
                     playing = true;
                 }
                 else{
                     if (mediaPlayer.isPlaying()){
                         mediaPlayer.pause();
                     }
-                    audio.setText(R.string.playMedia);
+                    audio.setImageResource(R.drawable.ic_play_arrow_24dp);
                     playing = false;
                 }
             }
@@ -238,36 +238,34 @@ public class PlayFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(URL... urls){
-            Boolean prepared = false;
-            //mediaPlayer.reset();
+            Boolean prepared;
             try {
-                Log.d("Play", "source url: " + urls[0].getPath());
 
-                String source = urls[0].toString();
+                //Log.d("Play", "source url: " + urls[0].getPath());
 
-                mediaPlayer.setDataSource(source);
+                //String source = urls[0].toString();
 
+                //mediaPlayer.setDataSource(source);
+
+
+
+                mediaPlayer.setDataSource(urls[0].toString());
 
                 prepared = false;
-                //seekBar.setMax(mediaPlayer.getDuration());
-
 
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
                         initialStage = true;
                         playing = false;
-                        audio.setText(R.string.playMedia);
+                        audio.setImageResource(R.drawable.ic_play_arrow_24dp);
                         mediaPlayer.stop();
                         mediaPlayer.reset();
                     }
                 });
 
-
                 try {
                     mediaPlayer.prepare();
-                    //seekBar.setMax(mediaPlayer.getDuration());
-                    //playCycle();
                     prepared = true;
 
                 } catch (IOException e) {

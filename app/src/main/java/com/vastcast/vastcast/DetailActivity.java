@@ -4,14 +4,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +27,15 @@ public class DetailActivity extends AppCompatActivity {
         Collection podcast = (Collection) i.getSerializableExtra("podcast");
         ImageView imgPodcast = findViewById(R.id.imgPodcast);
         new LoadImageTask(imgPodcast).execute(podcast.getImage());
+
+        TextView txtPodcastName = findViewById(R.id.txtPodcastName);
+        txtPodcastName.setText(podcast.getTitle());
+
+        TextView txtPodcastDescription = findViewById(R.id.txtPodcastDescription);
+        txtPodcastDescription.setText(podcast.getDescription());
+
+        Button btnAddRemove = findViewById(R.id.btnAddRemove);
+        btnAddRemove.setEnabled(false);
 
         RecyclerView episodeList = findViewById(R.id.rvEpisodeList);
         episodeList.setHasFixedSize(true);
@@ -76,8 +86,13 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.textView.setText(podcast.getEpisodes().get(position).getTitle());
-            holder.textView.setOnClickListener( new View.OnClickListener() {
+            TextView txtEpisodeTitle = holder.view.findViewById(R.id.txtEpisodeTitle);
+            txtEpisodeTitle.setText(podcast.getEpisodes().get(position).getTitle());
+
+            TextView txtTotalTime = holder.view.findViewById(R.id.txtTotalTime);
+            txtTotalTime.setText(podcast.getEpisodes().get(position).getDurationText());
+
+            holder.view.setOnClickListener( new View.OnClickListener() {
                 public void onClick(View view) {
                     String title = podcast.getEpisodes().get(holder.getAdapterPosition()).getTitle();
                     Log.d("DetailActivity", "Clicked on Episode: " + title);
@@ -96,11 +111,11 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            private TextView textView;
+            private View view;
 
             public ViewHolder(View v) {
                 super(v);
-                textView = v.findViewById(R.id.txtEpisodeTitle);
+                view = v;
             }
         }
     }

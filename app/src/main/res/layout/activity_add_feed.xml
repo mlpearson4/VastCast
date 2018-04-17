@@ -6,30 +6,52 @@
     android:layout_height="match_parent"
     tools:context=".AddFeedActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarAddFeed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <EditText
         android:id="@+id/txtUrl"
-        android:layout_width="230dp"
-        android:layout_height="45dp"
-        android:layout_marginBottom="100dp"
-        android:layout_marginTop="400dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginStart="50dp"
         android:ems="10"
         android:hint="@string/hintPodcastUrl"
         android:inputType="textUri"
-        app:layout_constraintBottom_toTopOf="@+id/btnEnterUrl"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineAddFeed"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineAddFeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".5" />
 
     <Button
         android:id="@+id/btnEnterUrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="464dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="8dp"
         android:text="@string/btnEnter"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtUrl" />
+        app:layout_constraintTop_toTopOf="@+id/guidelineAddFeed" />
 
 </android.support.constraint.ConstraintLayout>
