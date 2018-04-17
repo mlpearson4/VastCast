@@ -19,6 +19,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
+
         final SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
         if (pref.getBoolean(LOGIN_KEY, false)) {
             //has login, so start main activity
