@@ -22,19 +22,17 @@
         android:id="@+id/txtUrl"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginStart="50dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
         android:ems="10"
         android:hint="@string/hintPodcastUrl"
         android:inputType="textUri"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/guidelineAddFeed"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/btnEnterUrl"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guidelineAddFeed" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guidelineAddFeed"
@@ -47,11 +45,12 @@
         android:id="@+id/btnEnterUrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:text="@string/btnEnter"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineAddFeed"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/txtUrl"
         app:layout_constraintTop_toTopOf="@+id/guidelineAddFeed" />
 
 </android.support.constraint.ConstraintLayout>
