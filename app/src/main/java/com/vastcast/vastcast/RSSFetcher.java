@@ -34,7 +34,7 @@ public class RSSFetcher {
         Collection c = readRSS(parser, source);
         in.close();
         //Does this need to be static? Database Wrapper functions can't be static
-        //DatabaseWrapper.addCollection(c);
+        DatabaseWrapper.addCollection(c);
         return c;
     }
 

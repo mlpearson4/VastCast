@@ -8,9 +8,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 
 public class DatabaseWrapper {
-    private DatabaseReference myRef;
+    private static DatabaseReference myRef;
     private StorageReference mStorageRef;
-    private String userID;
+    private static String userID;
 
     protected void onCreate() {
         // for data persistence
@@ -18,24 +18,24 @@ public class DatabaseWrapper {
         myRef=FirebaseDatabase.getInstance().getReference("User");
         userID=myRef.push().getKey();
     }
-    public void addCollection(Collection col){
+    public static void addCollection(Collection col){
         myRef.child("users").child(userID).child("library").push().setValue(col);
     }
-    public void addToQueue(Collection col){
+    public static void addToQueue(Collection col){
         myRef.child("users").child(userID).child("queue").push().setValue(col);
     }
-    public void updateCollection(Collection col){
+    public static void updateCollection(Collection col){
         //this isn't entirely right atm
         myRef.child("users").child(userID).child("library").setValue(col);
     }
-    public void updateQueue(Collection col){
+    public static void updateQueue(Collection col){
         //this isn't entirely right atm
         myRef.child("users").child(userID).child("queue").setValue(col);
     }
-    public void removeFromCollection(Collection col){
+    public static void removeFromCollection(Collection col){
        // myRef.child("users").child(userID).child("library").removeValue();
     }
-    public void removeFromQueue(Collection col){
+    public static void removeFromQueue(Collection col){
         // myRef.child("users").child(userID).child("queue").removeValue();
     }
 
