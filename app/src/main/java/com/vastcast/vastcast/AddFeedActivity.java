@@ -14,9 +14,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class AddFeedActivity extends AppCompatActivity {
+    private EditText txtUrl;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_feed);
@@ -28,7 +31,7 @@ public class AddFeedActivity extends AppCompatActivity {
 
         /*TODO: Check Settings to determine connection status and preference*/
         Button btnEnterUrl = findViewById(R.id.btnEnterUrl);
-        final EditText txtUrl = findViewById(R.id.txtUrl);
+        txtUrl = findViewById(R.id.txtUrl);
         btnEnterUrl.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 new RetrieveFeedTask().execute(txtUrl.getText().toString());
@@ -67,8 +70,11 @@ public class AddFeedActivity extends AppCompatActivity {
 
         protected void onPostExecute(Collection c) {
             if(e != null) {
-                //Handle errors in reading a feed
+                if(e instanceof MalformedURLException) {
+                    txtUrl.setError("The entered URL is not a valid RSS feed");
+                }
                 Log.e("RSS", Log.getStackTraceString(e));
+                //others are IOException and XmlPullParserException
             }
             else {
                 Intent i = new Intent(AddFeedActivity.this, DetailActivity.class);

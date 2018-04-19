@@ -1,252 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.vastcast.vastcast.PlayFragment">
+    tools:context=".PlayFragment">
 
-    <ImageView
-        android:id="@+id/imgPlayingPodcast"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="8dp"
-        android:adjustViewBounds="false"
-        android:contentDescription="@string/imgPodcast"
-        app:layout_constraintBottom_toTopOf="@+id/txtEpisodeTitle"
-        app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:color/holo_blue_dark" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <ImageButton
-        android:id="@+id/ibEpisodeLeft"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        <ImageView
+            android:id="@+id/imgPlayingPodcast"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="12dp"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/imgPodcast"
+            app:layout_constraintBottom_toTopOf="@+id/txtEpisodeTitle"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:color/holo_blue_dark" />
+
+        <ImageButton
+            android:id="@+id/ibEpisodeLeft"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@color/activityBackground"
+            android:src="@android:drawable/arrow_up_float"
+            app:layout_constraintBottom_toBottomOf="@+id/txtPodcastName"
+            app:layout_constraintStart_toStartOf="@+id/imgPlayingPodcast"
+            app:layout_constraintTop_toTopOf="@+id/txtEpisodeTitle" />
+
+        <TextView
+            android:id="@+id/txtEpisodeTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/textPrimary"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/txtPodcastName"
+            app:layout_constraintEnd_toStartOf="@+id/ibEpisodeRight"
+            app:layout_constraintStart_toEndOf="@+id/ibEpisodeLeft"
+            app:layout_constraintTop_toBottomOf="@+id/imgPlayingPodcast" />
+
+        <ImageView
+            android:id="@+id/imgDownloadStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtEpisodeTitle"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintEnd_toStartOf="@+id/ibEpisodeRight"
+            app:layout_constraintStart_toEndOf="@+id/txtEpisodeTitle"
+            app:layout_constraintTop_toTopOf="@+id/txtEpisodeTitle" />
+
+        <TextView
+            android:id="@+id/txtPodcastName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/textPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/seekBar"
+            app:layout_constraintEnd_toStartOf="@+id/ibEpisodeRight"
+            app:layout_constraintStart_toEndOf="@+id/ibEpisodeLeft"
+            app:layout_constraintTop_toBottomOf="@+id/txtEpisodeTitle" />
+
+        <ImageButton
+            android:id="@+id/ibEpisodeRight"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@color/activityBackground"
+            app:srcCompat="@drawable/ic_more_vert_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtPodcastName"
+            app:layout_constraintEnd_toEndOf="@+id/imgPlayingPodcast"
+            app:layout_constraintTop_toTopOf="@+id/txtEpisodeTitle" />
+
+        <TextView
+            android:id="@+id/txtCurrentTime"
+            android:layout_width="56dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:gravity="right"
+            android:text="0:00"
+            android:textColor="@color/textPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/seekBar" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnPlayPause"
+            app:layout_constraintEnd_toStartOf="@+id/txtTotalTime"
+            app:layout_constraintStart_toEndOf="@+id/txtCurrentTime"
+            app:layout_constraintTop_toBottomOf="@+id/txtPodcastName" />
+
+        <TextView
+            android:id="@+id/txtTotalTime"
+            android:layout_width="56dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="left"
+            android:text="0:00"
+            android:textColor="@color/textPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/seekBar" />
+
+        <ImageButton
+            android:id="@+id/btnReplay"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@color/activityBackground"
+            app:srcCompat="@drawable/ic_replay_10_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnPlayPause"
+            app:layout_constraintEnd_toStartOf="@+id/btnPrevious"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/seekBar"
+            app:layout_constraintTop_toTopOf="@+id/btnPlayPause" />
+
+        <ImageButton
+            android:id="@+id/btnPrevious"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@color/activityBackground"
+            app:srcCompat="@drawable/ic_skip_previous_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnPlayPause"
+            app:layout_constraintEnd_toStartOf="@+id/btnPlayPause"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnReplay"
+            app:layout_constraintTop_toTopOf="@+id/btnPlayPause" />
+
+        <ImageButton
+            android:id="@+id/btnPlayPause"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="68dp"
+            android:background="@drawable/bg_rounded"
+            android:src="@android:drawable/ic_media_play"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnNext"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnPrevious"
+            app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@color/activityBackground"
+            app:srcCompat="@drawable/ic_skip_next_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnPlayPause"
+            app:layout_constraintEnd_toStartOf="@+id/btnForward"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnPlayPause"
+            app:layout_constraintTop_toTopOf="@+id/btnPlayPause" />
+
+        <ImageButton
+            android:id="@+id/btnForward"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@color/activityBackground"
+            app:srcCompat="@drawable/ic_forward_10_black_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnPlayPause"
+            app:layout_constraintEnd_toEndOf="@+id/seekBar"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnNext"
+            app:layout_constraintTop_toTopOf="@+id/btnPlayPause" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/activityBackground"
-        android:src="@android:drawable/arrow_up_float"
-        app:layout_constraintBottom_toBottomOf="@+id/txtPodcastName"
-        app:layout_constraintStart_toStartOf="@+id/imgPlayingPodcast"
-        app:layout_constraintTop_toTopOf="@+id/txtEpisodeTitle" />
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="60dp"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-    <TextView
-        android:id="@+id/txtEpisodeTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:ellipsize="marquee"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:gravity="center"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:textColor="@color/textPrimary"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/txtPodcastName"
-        app:layout_constraintEnd_toStartOf="@+id/ibEpisodeRight"
-        app:layout_constraintStart_toEndOf="@+id/ibEpisodeLeft"
-        app:layout_constraintTop_toBottomOf="@+id/imgPlayingPodcast" />
+        <View
+            android:id="@+id/tabQueue"
+            android:layout_width="fill_parent"
+            android:layout_height="56dp"
+            android:background="@color/colorPrimary"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/txtPodcastName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:ellipsize="marquee"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:gravity="center"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:textColor="@color/textPrimary"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar"
-        app:layout_constraintEnd_toStartOf="@+id/ibEpisodeRight"
-        app:layout_constraintStart_toEndOf="@+id/ibEpisodeLeft"
-        app:layout_constraintTop_toBottomOf="@+id/txtEpisodeTitle" />
+        <View
+            android:id="@+id/btnQueue"
+            android:layout_width="48dp"
+            android:layout_height="4dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorPrimaryDark"
+            android:contentDescription="@string/queueDescription"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tabQueue" />
 
-    <ImageButton
-        android:id="@+id/ibEpisodeRight"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="@color/activityBackground"
-        app:srcCompat="@drawable/ic_more_vert_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/txtPodcastName"
-        app:layout_constraintEnd_toEndOf="@+id/imgPlayingPodcast"
-        app:layout_constraintTop_toTopOf="@+id/txtEpisodeTitle" />
 
-    <TextView
-        android:id="@+id/txtCurrentTime"
-        android:layout_width="56dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:gravity="right"
-        android:text="0:00"
-        android:textColor="@color/textPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/seekBar" />
+    </android.support.constraint.ConstraintLayout>
 
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnPlayPause"
-        app:layout_constraintEnd_toStartOf="@+id/txtTotalTime"
-        app:layout_constraintStart_toEndOf="@+id/txtCurrentTime"
-        app:layout_constraintTop_toBottomOf="@+id/txtPodcastName" />
-
-    <TextView
-        android:id="@+id/txtTotalTime"
-        android:layout_width="56dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="left"
-        android:text="0:00"
-        android:textColor="@color/textPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/seekBar" />
-
-    <ImageButton
-        android:id="@+id/btnReplay"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="@color/activityBackground"
-        app:srcCompat="@drawable/ic_replay_10_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnPlayPause"
-        app:layout_constraintEnd_toStartOf="@+id/btnPrevious"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/seekBar"
-        app:layout_constraintTop_toTopOf="@+id/btnPlayPause" />
-
-    <ImageButton
-        android:id="@+id/btnPrevious"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="@color/activityBackground"
-        app:srcCompat="@drawable/ic_skip_previous_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnPlayPause"
-        app:layout_constraintEnd_toStartOf="@+id/btnPlayPause"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnReplay"
-        app:layout_constraintTop_toTopOf="@+id/btnPlayPause" />
-
-    <ImageButton
-        android:id="@+id/btnPlayPause"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/bg_rounded"
-        android:src="@android:drawable/ic_media_play"
-        app:layout_constraintBottom_toTopOf="@+id/tabQueue"
-        app:layout_constraintEnd_toStartOf="@+id/btnNext"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnPrevious"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
-
-    <ImageButton
-        android:id="@+id/btnNext"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="@color/activityBackground"
-        app:srcCompat="@drawable/ic_skip_next_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnPlayPause"
-        app:layout_constraintEnd_toStartOf="@+id/btnForward"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnPlayPause"
-        app:layout_constraintTop_toTopOf="@+id/btnPlayPause" />
-
-    <ImageButton
-        android:id="@+id/btnForward"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="@color/activityBackground"
-        app:srcCompat="@drawable/ic_forward_10_black_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnPlayPause"
-        app:layout_constraintEnd_toEndOf="@+id/seekBar"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnNext"
-        app:layout_constraintTop_toTopOf="@+id/btnPlayPause" />
-
-    <View
-        android:id="@+id/tabQueue"
-        android:layout_width="fill_parent"
-        android:layout_height="60dp"
-        android:background="@color/colorPrimaryDark"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageButton
-        android:id="@+id/btnQueue"
-        android:layout_width="48dp"
-        android:layout_height="24dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorPrimaryDark"
-        android:contentDescription="@string/queueDescription"
-        android:src="@android:drawable/arrow_up_float"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tabQueue" />
-
-    <TextView
-        android:id="@+id/current"
-        android:layout_width="108dp"
-        android:layout_height="19dp"
-        android:layout_marginBottom="71dp"
-        android:layout_marginEnd="167dp"
-        android:layout_marginStart="40dp"
-        android:text=""
-        android:textColor="@color/textPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/total"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/total"
-        android:layout_width="92dp"
-        android:layout_height="22dp"
-        android:layout_marginBottom="71dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginStart="167dp"
-        android:text=""
-        android:textColor="@color/textPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/current"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar"
-        app:layout_constraintVertical_bias="0.0" />
-
-</android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>

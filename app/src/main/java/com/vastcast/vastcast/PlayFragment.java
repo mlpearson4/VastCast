@@ -1,7 +1,6 @@
 package com.vastcast.vastcast;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -37,8 +36,11 @@ public class PlayFragment extends Fragment {
     Runnable runnable;
     URL image = null;
     URL source = null;
-    TextView current;
-    TextView total;
+    TextView txtTotalTime;
+    TextView txtCurrentTime;
+    ImageButton replay;
+    ImageButton forward;
+    int timeSkip;
 
     public static PlayFragment newInstance(Episode e, Collection c) {
         PlayFragment fragment = new PlayFragment();
@@ -53,6 +55,8 @@ public class PlayFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_play, container, false);
 
         Bundle arguments = getArguments();
+
+        timeSkip = 10 * 1000;
 
         if(arguments != null) {
             Collection c = (Collection) getArguments().getSerializable("collection");
@@ -70,8 +74,7 @@ public class PlayFragment extends Fragment {
 
         handler = new Handler();
         seekBar = view.findViewById(R.id.seekBar);
-        current = (TextView) view.findViewById(R.id.current);
-        total = (TextView) view.findViewById(R.id.total);
+
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -95,7 +98,9 @@ public class PlayFragment extends Fragment {
                 TextView txtEpisodeTitle = view.findViewById(R.id.txtEpisodeTitle);
                 txtEpisodeTitle.setText(e.getTitle());
                 txtEpisodeTitle.setSelected(true);
-                TextView txtTotalTime = view.findViewById(R.id.txtTotalTime);
+                txtCurrentTime = view.findViewById(R.id.txtCurrentTime);
+                txtTotalTime = view.findViewById(R.id.txtTotalTime);
+
                 txtTotalTime.setText(e.getDurationText());
                 source = e.getLink();
                 audio.setEnabled(true);
@@ -111,7 +116,7 @@ public class PlayFragment extends Fragment {
                     }
                     else{
                         if (!mediaPlayer.isPlaying()) {
-                            playCycle();
+                            //playCycle();
                             mediaPlayer.start();
                         }
                     }
@@ -128,11 +133,20 @@ public class PlayFragment extends Fragment {
             }
         });
 
-        ImageButton btnQueue = view.findViewById(R.id.btnQueue);
-        btnQueue.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PlayFragment.this.startActivity(new Intent(getActivity(), QueueActivity.class));
-            }
+        replay = view.findViewById(R.id.btnReplay);
+        replay.setOnClickListener(new View.OnClickListener(){
+           public void onClick(View v){
+               if (mediaPlayer != null)
+                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - timeSkip);
+           }
+        });
+
+        forward = view.findViewById(R.id.btnForward);
+        forward.setOnClickListener(new View.OnClickListener(){
+           public void onClick(View v){
+               if (mediaPlayer != null)
+                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + timeSkip);
+           }
         });
 
         return view;
@@ -149,19 +163,7 @@ public class PlayFragment extends Fragment {
         }
     }*/
 
-    public void playCycle(){
-        seekBar.setProgress(mediaPlayer.getCurrentPosition());
-        if (mediaPlayer.isPlaying()){
-            runnable = new Runnable(){
-                @Override
-                public void run(){
-                    playCycle();
-                }
-            };
-            handler.postDelayed(runnable, 1000);
-        }
 
-    }
     class LoadImageTask extends AsyncTask<URL, Void, Bitmap> {
         private Exception e;
         ImageView imgPodcast;
@@ -197,25 +199,12 @@ public class PlayFragment extends Fragment {
             int milliseconds;
             while(mediaPlayer != null){
                 milliseconds = mediaPlayer.getCurrentPosition();
-                /*if (mediaPlayer.getDuration() > 360000){
-                    current.setText(String.format("%d:%02d:%02d",
-                            TimeUnit.MILLISECONDS.toHours(milliseconds),
-                            TimeUnit.MILLISECONDS.toMinutes(milliseconds) -
-                                    TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds)),
-                            TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
-                                    TimeUnit.HOURS.toSeconds(TimeUnit.MILLISECONDS.toHours(milliseconds)) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds))
-                    ));
+                txtCurrentTime.setText(String.format("%d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(milliseconds),
+                        TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds))
+                ));
 
-                }
-                else {*/
-                    current.setText(String.format("%d:%02d",
-                            TimeUnit.MILLISECONDS.toMinutes(milliseconds),
-                            TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds))
-                    ));
-               // }
-                //seekBar.setProgress(mediaPlayer.getCurrentPosition());
                 if (mediaPlayer.isPlaying()){
 
                     seekBar.setProgress(mediaPlayer.getCurrentPosition());
@@ -241,13 +230,7 @@ public class PlayFragment extends Fragment {
             Boolean prepared;
             try {
 
-                //Log.d("Play", "source url: " + urls[0].getPath());
-
-                //String source = urls[0].toString();
-
-                //mediaPlayer.setDataSource(source);
-
-
+                Log.d("Play", "source url: " + urls[0].getPath());
 
                 mediaPlayer.setDataSource(urls[0].toString());
 
@@ -291,24 +274,7 @@ public class PlayFragment extends Fragment {
             Log.d("TIME_SET", "in seconds" + TimeUnit.MILLISECONDS.toSeconds(milliseconds));
             Log.d("TIME_SET", "in hours" + TimeUnit.HOURS.toSeconds(TimeUnit.MILLISECONDS.toHours(milliseconds)));
             Log.d("TIME_SET", "in minutes" + TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
-            /*if (milliseconds > 3600000){
-                total.setText(String.format("%d:%02d:%02d",
-                        TimeUnit.MILLISECONDS.toHours(milliseconds),
-                        TimeUnit.MILLISECONDS.toMinutes(milliseconds) -
-                                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds)),
-                        TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
-                                (TimeUnit.MILLISECONDS.)
 
-
-                ));
-            }
-            else {*/
-                total.setText(String.format("%d:%02d",
-                        TimeUnit.MILLISECONDS.toMinutes(milliseconds),
-                        TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds))
-                ));
-            //}
             seekBar.setMax(mediaPlayer.getDuration());
             new Time().execute();
 
@@ -317,7 +283,7 @@ public class PlayFragment extends Fragment {
             }
            initialStage = false;
             mediaPlayer.start();
-            playCycle();
+
         }
 
         @Override

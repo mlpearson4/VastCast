@@ -36,9 +36,6 @@
         <activity
             android:name=".DetailActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".QueueActivity"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

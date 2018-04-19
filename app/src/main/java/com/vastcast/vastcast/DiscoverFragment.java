@@ -19,6 +19,16 @@ public class DiscoverFragment extends Fragment {
                 DiscoverFragment.this.startActivity(new Intent(DiscoverFragment.this.getActivity(), AddFeedActivity.class));
             }
         });
+        //check connection status and disable fab if not connected, also activate snackbar
+        /*Snackbar snackbar = Snackbar.make(view, "No Connection", Snackbar.LENGTH_LONG);
+        snackbar.setAction("RETRY", new View.OnClickListener() {
+            public  void onClick(View view) {
+                //check connection status again
+                snackbar.hide();
+                fabAddPodcast.setEnabled(true);
+                //populate list from database
+            }
+        }).show();*/
         return view;
     }
 }
