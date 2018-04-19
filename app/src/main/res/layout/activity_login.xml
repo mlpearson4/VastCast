@@ -38,24 +38,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.317"
-        app:srcCompat="@drawable/vastcastlight" />
+        app:srcCompat="@drawable/vast_cast_light" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="330dp"
         android:layout_height="67dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="68dp"
         android:layout_marginEnd="40dp"
+        android:layout_marginLeft="42dp"
         android:layout_marginRight="40dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="37dp"
         android:gravity="center"
         android:text="@string/intro"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:fontFamily="monospace"
+        android:textColor="@color/colorAccent"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnSignIn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:fontFamily="monospace"
-        tools:textSize="26sp" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.0" />
+
 
 </android.support.constraint.ConstraintLayout>
