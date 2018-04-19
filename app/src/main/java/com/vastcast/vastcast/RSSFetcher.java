@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /*
 Test Feeds
@@ -34,7 +35,9 @@ public class RSSFetcher {
         Collection c = readRSS(parser, source);
         in.close();
         //this should work the second I make sure the database is getting persistently passed
-        //mDatabase.child("collection").child(c.getTitle()).setValue(c);
+        //I think we should consider iterating by size rather than this also
+        /*UUID ukey= UUID.randomUUID();
+        mDatabase.child("collection").child(ukey).setValue(c);*/
         return c;
     }
 
