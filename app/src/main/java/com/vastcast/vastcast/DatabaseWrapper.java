@@ -12,10 +12,7 @@ public class DatabaseWrapper {
     private StorageReference mStorageRef;
     private String userID;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected void onCreate() {
         // for data persistence
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         myRef=FirebaseDatabase.getInstance().getReference("User");
