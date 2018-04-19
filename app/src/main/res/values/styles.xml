@@ -10,6 +10,7 @@
         <item name="android:textColorHint">@color/textHint</item>
         <item name="colorButtonNormal">@color/colorAccent</item>
         <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <style name="ThemeOverlay.MyTextDetail" parent="AppTheme">
