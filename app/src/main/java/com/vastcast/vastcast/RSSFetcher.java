@@ -33,6 +33,8 @@ public class RSSFetcher {
         parser.nextTag();
         Collection c = readRSS(parser, source);
         in.close();
+        //this should work the second I make sure the database is getting persistently passed
+        //mDatabase.child("collection").child(c.getTitle()).setValue(c);
         return c;
     }
 
