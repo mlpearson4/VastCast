@@ -1,7 +1,6 @@
 package com.vastcast.vastcast;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -131,13 +130,6 @@ public class PlayFragment extends Fragment {
                     audio.setImageResource(R.drawable.ic_play_arrow_24dp);
                     playing = false;
                 }
-            }
-        });
-
-        ImageButton btnQueue = view.findViewById(R.id.btnQueue);
-        btnQueue.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PlayFragment.this.startActivity(new Intent(getActivity(), QueueActivity.class));
             }
         });
 
