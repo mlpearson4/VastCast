@@ -1,4 +1,4 @@
-/*package com.vastcast.vastcast;
+package com.vastcast.vastcast;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -19,28 +19,27 @@ public class DatabaseWrapper {
         // for data persistence
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         myRef=FirebaseDatabase.getInstance().getReference("User");
-        userID= myRef.push().getKey();
+        userID=myRef.push().getKey();
     }
-    private void addCollection(Collection col){
-        myRef.child().setValue(col);
+    public void addCollection(Collection col){
+        myRef.child("users").child(userID).child("library").push().setValue(col);
     }
-    private void updateCollection(Collection col){
-        myRef.child(userID).child("library").setValue();
-        myRef.child(userID).child("").setValue();
+    public void addToQueue(Collection col){
+        myRef.child("users").child(userID).child("queue").push().setValue(col);
     }
-    private void removePerson(String name){
-        /*Query deleteQuery = myDatabaseReference.orderByChild("fullName").equalTo(name);
-        deleteQuery.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });*/
-/*
-        myDatabaseReference.child(personId).removeValue();
+    public void updateCollection(Collection col){
+        //this isn't entirely right atm
+        myRef.child("users").child(userID).child("library").setValue(col);
+    }
+    public void updateQueue(Collection col){
+        //this isn't entirely right atm
+        myRef.child("users").child(userID).child("queue").setValue(col);
+    }
+    public void removeFromCollection(Collection col){
+       // myRef.child("users").child(userID).child("library").removeValue();
+    }
+    public void removeFromQueue(Collection col){
+        // myRef.child("users").child(userID).child("queue").removeValue();
     }
 
 }
-*/

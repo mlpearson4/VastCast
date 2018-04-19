@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.UUID;
 
 /*
 Test Feeds
@@ -34,10 +33,8 @@ public class RSSFetcher {
         parser.nextTag();
         Collection c = readRSS(parser, source);
         in.close();
-        //this should work the second I make sure the database is getting persistently passed
-        //I think we should consider iterating by size rather than this also
-        /*UUID ukey= UUID.randomUUID();
-        mDatabase.child("collection").child(ukey).setValue(c);*/
+        //Does this need to be static? Database Wrapper functions can't be static
+        //DatabaseWrapper.addCollection(c);
         return c;
     }
 
