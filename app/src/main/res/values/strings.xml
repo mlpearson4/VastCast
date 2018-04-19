@@ -36,6 +36,7 @@
     <string name="playTab">Play</string>
     <string name="manageTab">Manage</string>
     <string name="action_settings">Settings</string>
-    <string name="welcome_to_vastcast">Welcome to VastCast</string>
+    <string name="intro">A Vastly Superior Podcast Application</string>
+    <string name="logo">Logo</string>
 
 </resources>
