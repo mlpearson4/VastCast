@@ -103,7 +103,7 @@ public class RSSFetcher {
             return null;
         }
         else {
-            return new Collection(title, description, image, author, episodes, source);
+            return new Collection(title, description, image.toString(), author, episodes, source.toString());
         }
     }
 
@@ -209,7 +209,7 @@ public class RSSFetcher {
             return null;
         }
         else {
-            return new Episode(title, description, season, episode, duration, link);
+            return new Episode(title, description, duration, link.toString());
         }
     }
 
