@@ -7,12 +7,12 @@ import java.util.ArrayList;
 public class Collection implements Serializable {
     private String title;
     private String description;
-    private URL image;
+    private String image;
     private String author;
     private ArrayList<Episode> episodes;
-    private URL source;
+    private String source;
 
-    public Collection(String title, String description, URL image, String author, ArrayList<Episode> episodes, URL source) {
+    public Collection(String title, String description, String image, String author, ArrayList<Episode> episodes, String source) {
         this.title = title;
         this.description = description;
         this.image = image;
@@ -20,24 +20,53 @@ public class Collection implements Serializable {
         this.episodes = episodes;
         this.source = source;
     }
+    public Collection(){
 
+    }
     public String getTitle() {
         return title;
     }
-
+    public void setTitle(String title){
+        this.title= title;
+    }
     public String getDescription() {
         return description;
     }
-
-    public URL getImage() {
+    public void setDescription(String descript){
+        this.description=descript;
+    }
+    public String getImage() {
         return image;
     }
-
+    public void setImage(String image){
+        this.image=image.toString();
+    }
+    public URL makeImage() {
+       try {
+           return new URL(this.image);
+       }
+       catch (Exception e){
+           return null;
+        }
+    }
     public ArrayList<Episode> getEpisodes() {
         return episodes;
     }
-
-    public URL getSource() {
+    public void setEpisodes(ArrayList<Episode> e){
+        this.episodes=e;
+    }
+    public String getSource() {
         return source;
+    }
+    public void setSource(String source){
+        this.source=source.toString();
+    }
+    public URL makeSource() {
+        try {
+            return new URL(this.source);
+        }
+        catch (Exception e){
+            return null;
+        }
     }
 }

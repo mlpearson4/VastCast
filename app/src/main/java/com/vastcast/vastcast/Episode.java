@@ -6,19 +6,14 @@ import java.net.URL;
 public class Episode implements Serializable {
     private String title;
     private String description;
-    private int season;
-    private int episode;
     private int duration;
-    private URL link;
+    private String link;
 
-    public Episode(String title, String description, int season, int episode, int duration, URL link) {
+    public Episode(String title, String description, int duration, String link) {
         this.title = title;
         this.description = description;
-        this.season = season;
-        this.episode = episode;
         this.duration = duration;
         this.link = link;
-
         /*TODO: Add Date Using pubdate Tag*/
     }
 
@@ -26,29 +21,42 @@ public class Episode implements Serializable {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title=title;
+    }
     public String getDescription() {
         return description;
     }
-
-    public int getEpisodeNumber() {
-        return episode;
+    public void setDescription(String descript){
+        this.description=descript;
     }
-
-    public int getSeason() {
-        return season;
-    }
-
     public int getDuration() {
         return duration;
     }
 
+    public void setDuration(int duration){
+        this.duration=duration;
+    }
     public String getDurationText() {
         int seconds = duration % 60;
         int minutes = duration / 60;
         return Integer.toString(minutes) + ":" + String.format("%02d", seconds);
     }
 
-    public URL getLink() {
+    public String getLink() {
         return link;
+    }
+
+    public void setLink(String link){
+        this.link=link;
+    }
+
+    public URL makeLink(){
+        try {
+            return new URL(this.link);
+        }
+        catch (Exception e){
+            return null;
+        }
     }
 }

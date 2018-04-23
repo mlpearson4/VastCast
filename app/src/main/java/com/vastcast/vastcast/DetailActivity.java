@@ -41,7 +41,7 @@ public class DetailActivity extends AppCompatActivity {
         Intent i = getIntent();
         Collection podcast = (Collection) i.getSerializableExtra("podcast");
         ImageView imgPodcast = findViewById(R.id.imgPodcast);
-        new LoadImageTask(imgPodcast).execute(podcast.getImage());
+        new LoadImageTask(imgPodcast).execute(podcast.makeImage());
 
         TextView txtPodcastName = findViewById(R.id.txtPodcastTitle);
         txtPodcastName.setText(podcast.getTitle());

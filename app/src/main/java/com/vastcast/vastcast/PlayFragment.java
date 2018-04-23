@@ -136,7 +136,7 @@ public class PlayFragment extends Fragment {
 
             txtTotalTime = view.findViewById(R.id.txtTotalTime);
             txtTotalTime.setText(episode.getDurationText());
-            source = episode.getLink();
+            source = episode.makeLink();
             audio.setEnabled(true);
 
             queue = collection.getEpisodes();
@@ -145,7 +145,7 @@ public class PlayFragment extends Fragment {
                 Collections.reverse(queue);
             }
 
-            URL image = collection.getImage();
+            URL image = collection.makeImage();
             if(image != null) {
                 ImageView imgPlayPodcast = view.findViewById(R.id.imgPodcast);
                 new LoadImageTask(imgPlayPodcast).execute(image);
@@ -173,7 +173,7 @@ public class PlayFragment extends Fragment {
                         currentEpisode--;
                         initialStage = true; //some other stuff necessary probably
                         episode = queue.get(currentEpisode);
-                        source = episode.getLink();
+                        source = episode.makeLink();
                         txtEpisodeTitle.setText(episode.getTitle());
                         txtTotalTime.setText(episode.getDurationText());
                         adapter.notifyDataSetChanged();
@@ -190,7 +190,7 @@ public class PlayFragment extends Fragment {
                         currentEpisode++;
                         initialStage = true; //some other stuff necessary probably
                         episode = queue.get(currentEpisode);
-                        source = episode.getLink();
+                        source = episode.makeLink();
                         txtEpisodeTitle.setText(episode.getTitle());
                         txtTotalTime.setText(episode.getDurationText());
                         adapter.notifyDataSetChanged();
@@ -384,7 +384,7 @@ public class PlayFragment extends Fragment {
                     currentEpisode = holder.getAdapterPosition() + currentEpisode + 1;
                     initialStage = true; //some other stuff necessary probably
                     episode = queue.get(currentEpisode);
-                    source = episode.getLink();
+                    source = episode.makeLink();
                     txtEpisodeTitleInner.setText(episode.getTitle());
                     txtTotalTimeInner.setText(episode.getDurationText());
                     adapter.notifyDataSetChanged();
