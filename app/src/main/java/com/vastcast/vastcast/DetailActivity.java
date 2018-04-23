@@ -13,6 +13,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,11 +29,12 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Toolbar toolbar = findViewById(R.id.toolbarAddFeed);
+        Toolbar toolbar = findViewById(R.id.toolbarDetail);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if(ab != null) {
             /*TODO: Have Up Direct to Manage Page*/
+            //DatabaseWrapper.directToPage(2);
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -53,6 +57,22 @@ public class DetailActivity extends AppCompatActivity {
         episodeList.setHasFixedSize(true);
         episodeList.setLayoutManager(new LinearLayoutManager(this));
         episodeList.setAdapter(new PodcastAdapter(podcast));
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_settings, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.actionSettings:
+                //launch settings with an intent
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     class LoadImageTask extends AsyncTask<URL, Void, Bitmap> {
