@@ -25,7 +25,6 @@ Top Scallops - "https://rss.simplecast.com/podcasts/1497/rss"
 
 public class RSSFetcher {
     public static Collection fetch(URL source) throws IOException, XmlPullParserException {
-        //Log.d("RSS", "Began Fetching");
         InputStream in = source.openStream();
         XmlPullParser parser = Xml.newPullParser();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -39,7 +38,6 @@ public class RSSFetcher {
     }
 
     private static Collection readRSS(XmlPullParser parser, URL source) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading RSS");
         parser.require(XmlPullParser.START_TAG, null, "rss");
         while(parser.next() != XmlPullParser.END_TAG) {
             if(parser.getEventType() != XmlPullParser.START_TAG) {
@@ -53,12 +51,11 @@ public class RSSFetcher {
                 skip(parser);
             }
         }
-        Log.d("RSS", "Invalid Feed: Missing RSS Tag");
+        Log.e("RSS", "Invalid Feed: Missing RSS Tag");
         return null;
     }
 
     private static Collection readChannel(XmlPullParser parser, URL source) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Channel");
         parser.require(XmlPullParser.START_TAG, null, "channel");
         String title = null;
         String description = null;
@@ -98,20 +95,19 @@ public class RSSFetcher {
             }
         }
         if(title == null || description == null || image == null || author == null || episodes.size() == 0 || source == null) {
-            Log.d("RSS", "Invalid Feed: Missing Element Required for Podcast");
-            Log.d("RSS", title + "\n" + description);
-            if(image != null) Log.d("RSS", image.toString());
-            Log.d("RSS", author + "\n" + episodes.size());
-            if(source != null) Log.d("RSS", source.toString());
+            Log.e("RSS", "Invalid Feed: Missing Element Required for Podcast");
+            Log.e("RSS", title + "\n" + description);
+            if(image != null) Log.e("RSS", image.toString());
+            Log.e("RSS", author + "\n" + episodes.size());
+            if(source != null) Log.e("RSS", source.toString());
             return null;
         }
         else {
-            return new Collection(title, description, image, author, episodes, source, true);
+            return new Collection(title, description, image, author, episodes, source);
         }
     }
 
     private static String readTitle(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Title");
         parser.require(XmlPullParser.START_TAG, null, "title");
         String title = readText(parser);
         parser.require(XmlPullParser.END_TAG, null, "title");
@@ -119,7 +115,6 @@ public class RSSFetcher {
     }
 
     private static String readDescription(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Description");
         parser.require(XmlPullParser.START_TAG, null, "description");
         String description = readText(parser);
         parser.require(XmlPullParser.END_TAG, null, "description");
@@ -127,7 +122,6 @@ public class RSSFetcher {
     }
 
     private static URL readImage(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Image");
         parser.require(XmlPullParser.START_TAG, null, "image");
         String image = null;
         while(parser.next() != XmlPullParser.END_TAG) {
@@ -154,7 +148,6 @@ public class RSSFetcher {
     }
 
     private static String readAuthor(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Author");
         parser.require(XmlPullParser.START_TAG, null, "itunes:author");
         String author = readText(parser);
         parser.require(XmlPullParser.END_TAG, null, "itunes:author");
@@ -162,7 +155,6 @@ public class RSSFetcher {
     }
 
     private static Episode readEpisode(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Episode");
         parser.require(XmlPullParser.START_TAG, null, "item");
         String title = null;
         String description = null;
@@ -210,10 +202,9 @@ public class RSSFetcher {
                 }
             }
         }
-        /*Todo: adjust so that episodes don't require numbers and they are generated when missing*/
         if(title == null || description == null /*|| (episode == -1 && !isTrailer)*/ || duration == -1 || link == null) {
-            Log.d("RSS", "Invalid Feed: Missing Element Required for Episode");
-            Log.d("RSS", title + "\n" + description + "\n" + isTrailer + "\n" + season + "\n" + episode + "\n" + duration);
+            Log.e("RSS", "Invalid Feed: Missing Element Required for Episode");
+            Log.e("RSS", title + "\n" + description + "\n" + isTrailer + "\n" + season + "\n" + episode + "\n" + duration);
             if(link != null) Log.d("RSS", link.toString());
             return null;
         }
@@ -223,7 +214,6 @@ public class RSSFetcher {
     }
 
     private static String readEpisodeType(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Episode Type");
         parser.require(XmlPullParser.START_TAG, null, "itunes:episodeType");
         String type = readText(parser);
         parser.require(XmlPullParser.END_TAG, null, "itunes:episodeType");
@@ -231,7 +221,6 @@ public class RSSFetcher {
     }
 
     private static int readSeasonNumber(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Season Number");
         parser.require(XmlPullParser.START_TAG, null, "itunes:season");
         int season = readNumber(parser);
         parser.require(XmlPullParser.END_TAG, null, "itunes:season");
@@ -239,7 +228,6 @@ public class RSSFetcher {
     }
 
     private static int readEpisodeNumber(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Episode Number");
         parser.require(XmlPullParser.START_TAG, null, "itunes:episode");
         int episode = readNumber(parser);
         parser.require(XmlPullParser.END_TAG, null, "itunes:episode");
@@ -247,7 +235,6 @@ public class RSSFetcher {
     }
 
     private static int readDuration(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Duration");
         parser.require(XmlPullParser.START_TAG, null, "itunes:duration");
         String time = readText(parser);
         parser.require(XmlPullParser.END_TAG, null, "itunes:duration");
@@ -268,7 +255,6 @@ public class RSSFetcher {
     }
 
     private static URL readLink(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Reading Episode Link");
         if(parser.getEventType() == XmlPullParser.START_TAG) {
             String url = parser.getAttributeValue(null, "url");
             skip(parser);
@@ -301,7 +287,6 @@ public class RSSFetcher {
     }
 
     private static void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
-        //Log.d("RSS", "Began Skipping");
         if(parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
         }

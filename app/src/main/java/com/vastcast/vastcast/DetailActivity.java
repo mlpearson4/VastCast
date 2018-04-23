@@ -5,9 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,12 +26,20 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        Toolbar toolbar = findViewById(R.id.toolbarAddFeed);
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        if(ab != null) {
+            /*TODO: Have Up Direct to Manage Page*/
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+
         Intent i = getIntent();
         Collection podcast = (Collection) i.getSerializableExtra("podcast");
         ImageView imgPodcast = findViewById(R.id.imgPodcast);
         new LoadImageTask(imgPodcast).execute(podcast.getImage());
 
-        TextView txtPodcastName = findViewById(R.id.txtPodcastName);
+        TextView txtPodcastName = findViewById(R.id.txtPodcastTitle);
         txtPodcastName.setText(podcast.getTitle());
 
         TextView txtPodcastDescription = findViewById(R.id.txtPodcastDescription);
@@ -36,13 +47,12 @@ public class DetailActivity extends AppCompatActivity {
 
         Button btnAddRemove = findViewById(R.id.btnAddRemove);
         btnAddRemove.setEnabled(false);
+        /*TODO: Make Add/Remove affect library in database*/
 
         RecyclerView episodeList = findViewById(R.id.rvEpisodeList);
         episodeList.setHasFixedSize(true);
-        RecyclerView.LayoutManager podcastLayoutManager = new LinearLayoutManager(this);
-        episodeList.setLayoutManager(podcastLayoutManager);
-        RecyclerView.Adapter podcastAdapter = new PodcastAdapter(podcast);
-        episodeList.setAdapter(podcastAdapter);
+        episodeList.setLayoutManager(new LinearLayoutManager(this));
+        episodeList.setAdapter(new PodcastAdapter(podcast));
     }
 
     class LoadImageTask extends AsyncTask<URL, Void, Bitmap> {
@@ -64,7 +74,6 @@ public class DetailActivity extends AppCompatActivity {
 
         protected void onPostExecute(Bitmap bitmap) {
             if(e != null) {
-                //Handle errors in loading an image
                 Log.e("DetailActivity", Log.getStackTraceString(e));
             }
             else {
@@ -73,19 +82,19 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.ViewHolder> {
+    class PodcastAdapter extends RecyclerView.Adapter<ViewHolder> {
         private Collection podcast;
 
-        public PodcastAdapter(Collection podcast) {
+        PodcastAdapter(Collection podcast) {
             this.podcast = podcast;
         }
 
-        public PodcastAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_podcast_episode, parent, false);
             return new ViewHolder(v);
         }
 
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final @NonNull ViewHolder holder, int position) {
             TextView txtEpisodeTitle = holder.view.findViewById(R.id.txtEpisodeTitle);
             txtEpisodeTitle.setText(podcast.getEpisodes().get(position).getTitle());
 
@@ -94,29 +103,31 @@ public class DetailActivity extends AppCompatActivity {
 
             holder.view.setOnClickListener( new View.OnClickListener() {
                 public void onClick(View view) {
-                    String title = podcast.getEpisodes().get(holder.getAdapterPosition()).getTitle();
-                    Log.d("DetailActivity", "Clicked on Episode: " + title);
-                    //Below should allow for passing of data needed to play episodes
+                    /*TODO: Change to pass episode to play through database*/
                     Intent i = new Intent(DetailActivity.this, MainActivity.class);
                     i.putExtra("toPlay", true);
                     i.putExtra("currentPlaylist", podcast);
                     i.putExtra("currentEpisode", podcast.getEpisodes().get(holder.getAdapterPosition()));
+                    i.putExtra("currentEpisodeNumber", holder.getAdapterPosition());
+                    i.putExtra("reversed", false);
                     DetailActivity.this.startActivity(i);
                 }
             });
+
+            /*TODO: Do something with left and right episode buttons*/
         }
 
         public int getItemCount() {
             return podcast.getEpisodes().size();
         }
+    }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
-            private View view;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        private View view;
 
-            public ViewHolder(View v) {
-                super(v);
-                view = v;
-            }
+        ViewHolder(View v) {
+            super(v);
+            view = v;
         }
     }
 }

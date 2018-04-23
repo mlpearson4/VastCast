@@ -1,8 +1,5 @@
 package com.vastcast.vastcast;
 
-import android.os.Bundle;
-import android.util.Log;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
@@ -19,7 +16,7 @@ public class DatabaseWrapper {
         userID=myRef.push().getKey();
     }
     public static void addCollection(Collection col){
-        myRef.child("users").child(userID).child("library").push().setValue(col);
+        //myRef.child("users").child(userID).child("library").push().setValue(col);
     }
     public static void addToQueue(Collection col){
         myRef.child("users").child(userID).child("queue").push().setValue(col);

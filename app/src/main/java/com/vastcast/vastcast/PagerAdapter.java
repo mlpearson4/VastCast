@@ -10,6 +10,8 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     private int numTabs;
     private Episode episode = null;
     private Collection collection = null;
+    private int episodeNumber = 0;
+    private boolean reversed = false;
 
     public PagerAdapter(FragmentManager fm, Context context, int numTabs) {
         super(fm);
@@ -20,11 +22,11 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return context.getString(R.string.discoverTab);
+                return context.getString(R.string.discover);
             case 1:
-                return context.getString(R.string.playTab);
+                return context.getString(R.string.play);
             case 2:
-                return context.getString(R.string.manageTab);
+                return context.getString(R.string.manage);
             default:
                 return null;
         }
@@ -35,7 +37,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return new DiscoverFragment();
             case 1:
-                return PlayFragment.newInstance(episode, collection);
+                return PlayFragment.newInstance(episode, collection, episodeNumber, reversed);
             case 2:
                 return new ManageFragment();
             default:
@@ -43,9 +45,11 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
         }
     }
 
-    public void setPlayArguments(Episode e, Collection c) {
+    public void setPlayArguments(Episode e, Collection c, int episodeNumber, boolean reversed) {
         this.episode = e;
         this.collection = c;
+        this.episodeNumber = episodeNumber;
+        this.reversed = reversed;
     }
 
     public int getCount() {

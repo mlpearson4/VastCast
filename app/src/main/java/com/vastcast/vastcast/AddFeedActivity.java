@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -27,9 +28,11 @@ public class AddFeedActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbarAddFeed);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
+        if(ab != null) {
+            /*TODO: Have Up Direct to Discover Page*/
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
-        /*TODO: Check Settings to determine connection status and preference*/
         Button btnEnterUrl = findViewById(R.id.btnEnterUrl);
         txtUrl = findViewById(R.id.txtUrl);
         btnEnterUrl.setOnClickListener(new View.OnClickListener() {
@@ -47,7 +50,7 @@ public class AddFeedActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.actionSettings:
                 //launch settings with an intent
                 return true;
             default:
@@ -70,7 +73,7 @@ public class AddFeedActivity extends AppCompatActivity {
 
         protected void onPostExecute(Collection c) {
             if(e != null) {
-                if(e instanceof MalformedURLException) {
+                if(e instanceof MalformedURLException || e instanceof FileNotFoundException) {
                     txtUrl.setError("The entered URL is not a valid RSS feed");
                 }
                 Log.e("RSS", Log.getStackTraceString(e));

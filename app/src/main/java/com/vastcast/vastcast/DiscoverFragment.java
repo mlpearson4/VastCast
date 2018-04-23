@@ -15,20 +15,11 @@ public class DiscoverFragment extends Fragment {
         FloatingActionButton fabAddPodcast = view.findViewById(R.id.fabAddPodcast);
         fabAddPodcast.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //might need to check DiscoverFragment.this.isAdded() before using getActivity()
                 DiscoverFragment.this.startActivity(new Intent(DiscoverFragment.this.getActivity(), AddFeedActivity.class));
             }
         });
-        //check connection status and disable fab if not connected, also activate snackbar
-        /*Snackbar snackbar = Snackbar.make(view, "No Connection", Snackbar.LENGTH_LONG);
-        snackbar.setAction("RETRY", new View.OnClickListener() {
-            public  void onClick(View view) {
-                //check connection status again
-                snackbar.hide();
-                fabAddPodcast.setEnabled(true);
-                //populate list from database
-            }
-        }).show();*/
+        /*TODO: Get basic page displaying podcasts from database*/
+        /*TODO: Get basic search working*/
         return view;
     }
 }

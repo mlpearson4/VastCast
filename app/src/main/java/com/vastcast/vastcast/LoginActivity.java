@@ -28,7 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private GoogleSignInClient gsiClient;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -50,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    @Override
     protected void onStart() {
         super.onStart();
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
@@ -62,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
         updateUI(account);
     }
 
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
@@ -73,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 Log.w("LoginActivity", "signInResult:failed code=" + e.getStatusCode());
                 Log.e("LoginActivity", Log.getStackTraceString(e));
-                Snackbar.make(findViewById(R.id.loginLayout), "Authentication Failed", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.clLogin), "Authentication Failed", Snackbar.LENGTH_SHORT).show();
             }
         }
     }
@@ -86,13 +83,13 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Log.d("LoginActivity", "signInWithCredential:success");
-                    Snackbar.make(findViewById(R.id.loginLayout), "Authentication Successful", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.clLogin), "Authentication Successful", Snackbar.LENGTH_SHORT).show();
                     FirebaseUser account = mAuth.getCurrentUser();
                     updateUI(account);
                 }
                 else {
                     Log.w("LoginActivity", "signInWithCredential:failure", task.getException());
-                    Snackbar.make(findViewById(R.id.loginLayout), "Authentication Failed", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.clLogin), "Authentication Failed", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -102,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
         if(account != null) {
             Intent i = new Intent(LoginActivity.this, MainActivity.class);
             LoginActivity.this.startActivity(i);
+            finish();
         }
     }
 }

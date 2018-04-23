@@ -10,38 +10,35 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
 public class MainActivity extends AppCompatActivity {
-    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference myRef = mDatabase.getReference();
-    private StorageReference mStorageRef;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbarMain);
-        setSupportActionBar(toolbar);
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
-        ViewPager viewPager = findViewById(R.id.pagerMain);
-        viewPager.addOnPageChangeListener(new CircularOnPageChangeListener(viewPager)); //comment out this line to remove circular tabs
-        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getContext(), tabLayout.getTabCount());
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
-        mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        Toolbar tbMain = findViewById(R.id.tbMain);
+        setSupportActionBar(tbMain);
+
+        TabLayout tlMain = findViewById(R.id.tlMain);
+        ViewPager vpMain = findViewById(R.id.vpMain);
+        vpMain.addOnPageChangeListener(new CircularOnPageChangeListener(vpMain));
+        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tlMain.getContext(), tlMain.getTabCount());
+        vpMain.setAdapter(adapter);
+        tlMain.setupWithViewPager(vpMain);
+
+        /*TODO: Determine the best way to direct MainActivity to the desired tab (Use Database?)*/
         Intent i = getIntent();
-        //when started with the intent to play an episode
         if(i.hasExtra("toPlay")) {
             Episode e = (Episode) i.getSerializableExtra("currentEpisode");
             Collection c = (Collection) i.getSerializableExtra("currentPlaylist");
-            adapter.setPlayArguments(e, c);
-            viewPager.setCurrentItem(1);
+            int episodeNumber = i.getIntExtra("currentEpisodeNumber", 0);
+            boolean reversed = i.getBooleanExtra("reversed", false);
+            adapter.setPlayArguments(e, c, episodeNumber, reversed);
+            vpMain.setCurrentItem(1);
         }
     }
 
+    /*TODO: Add Search to Menu*/
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_settings, menu);
@@ -50,8 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                //launch settings with an intent
+            case R.id.actionSettings:
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
@@ -64,14 +60,16 @@ public class MainActivity extends AppCompatActivity {
         private ViewPager viewPager;
         private int lastState;
 
-        public CircularOnPageChangeListener(final ViewPager viewPager) {
+        CircularOnPageChangeListener(final ViewPager viewPager) {
             this.viewPager = viewPager;
         }
 
-        @Override
         public void onPageScrollStateChanged(final int state) {
             int currentPosition = viewPager.getCurrentItem();
-            int lastPosition = viewPager.getAdapter().getCount() - 1;
+            int lastPosition = 0;
+            if(viewPager.getAdapter() != null) {
+                lastPosition = viewPager.getAdapter().getCount() - 1;
+            }
             if(currentPosition == 0 || currentPosition == lastPosition) {
                 if(state == ViewPager.SCROLL_STATE_IDLE && lastState == ViewPager.SCROLL_STATE_DRAGGING) {
                     if(currentPosition == 0) {

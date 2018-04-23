@@ -1,61 +1,46 @@
 <resources>
     <string name="app_name">VastCast</string>
-    <string name="btnEnter">Enter</string>
-    <string name="textViewUrlPrompt">Enter the URL for a podcast rss feed</string>
-    <string name="txtUrl">URL</string>
-    <string name="hintPodcastUrl">URL for a podcast RSS feed</string>
-    <string name="imgPodcast">Podcast Cover Image</string>
-    <string name="title_activity_login">VastCast</string>
 
-    <!-- Strings related to login -->
-    <string name="Login">Log In</string>
-    <string name="sign_in">Sign In</string>
-    <string name="create_account">Create Account</string>
-    <string name="sign_out">Sign Out</string>
-    <string name="verify_email">Verify Email</string>
-    <string name="disconnect">Disconnect</string>
-    <string name="signed_in">Signed In</string>
-    <string name="signed_out">Signed Out</string>
-    <string name="loading">Loading...</string>
-
-    <string name="firebase_status_fmt">Firebase User: %s</string>
-    <string name="firebase_user_management">Firebase User Management</string>
-
-    <string name="google_status_fmt">Google User: %s</string>
-    <string name="google_title_text">Google Sign In</string>
-
-    <!-- Strings for manage fragment -->
-    <string name="addRSS">Add Podcast</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Fragment</string>
-    <string name="playMedia">Play</string>
-    <string name="pauseMedia">Pause</string>
-    <string name="queueDescription">Open Queue</string>
-    <string name="discoverTab">Discover</string>
-    <string name="playTab">Play</string>
-    <string name="manageTab">Manage</string>
-    <string name="action_settings">Settings</string>
-    <string name="intro">A Vastly Superior Podcast Application</string>
     <string name="logo">Logo</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="tag_line">A Vastly Superior Podcast Application</string>
 
-    <!-- Strings related to Settings -->
+    <string name="discover">Discover</string>
+    <string name="play">Play</string>
+    <string name="manage">Manage</string>
 
-    <!-- Example General settings -->
+    <string name="podcast_image">Podcast Image</string>
+    <string name="left_podcast_button">Left Podcast Button</string>
+    <string name="download_status">Download Status</string>
+    <string name="right_podcast_button">Right Podcast Button</string>
+    <string name="zero_time">0:00</string>
+    <string name="replay_button">Replay Button</string>
+    <string name="previous_button">Previous Button</string>
+    <string name="play_pause_button">Play/Pause Button</string>
+    <string name="pause">Pause</string>
+    <string name="next_button">Next Button</string>
+    <string name="skip_button">Skip Button</string>
+    <string name="queue">Queue</string>
+
+    <string name="podcast_url">Podcast URL</string>
+    <string name="enter">Enter</string>
+
+    <string name="add">add</string>
+
+    <string name="left_episode_button">Left Episode Button</string>
+    <string name="right_episode_button">Right Episode Button</string>
+
+    <string name="settings">Settings</string>
+
+    <!--Settings Strings-->
     <string name="pref_header_general">General</string>
-
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
         based on your listen history
     </string>
-
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>
-
-    <string name="delete_title">Delete old podcasts</string>
-    <string name="delete_summary">Delete podcasts once they have been listened to</string>
-
+    <string name="delete_title">Delete old Podcasts</string>
+    <string name="delete_summary">Delete Podcasts once they have been listened to</string>
     <string name="pref_title_add_friends_to_messages">Add friends to VastCast</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
@@ -67,10 +52,7 @@
         <item>0</item>
         <item>-1</item>
     </string-array>
-
-    <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
-
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
         <item>15 minutes</item>
@@ -88,31 +70,21 @@
         <item>360</item>
         <item>-1</item>
     </string-array>
-
     <string-array name="list_preference_entries">
         <item>Entry 1</item>
         <item>Entry 2</item>
         <item>Entry 3</item>
     </string-array>
-
     <string-array name="list_preference_entry_values">
         <item>1</item>
         <item>2</item>
         <item>3</item>
     </string-array>
-
     <string-array name="multi_select_list_preference_default_value" />
-
     <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
-
     <string name="pref_title_new_message_notifications">New podcast notifications</string>
-
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
-
     <string name="pref_title_vibrate">Vibrate</string>
-
 </resources>

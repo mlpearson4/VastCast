@@ -10,8 +10,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MotionEventCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -21,64 +26,61 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-//http://feeds.feedburner.com/mbmbam
-
-
 public class PlayFragment extends Fragment {
-    Boolean playing = false;
-    Boolean initialStage = true;
-    MediaPlayer mediaPlayer;
-    SeekBar seekBar;
-    ImageButton audio;
-    Handler handler;
-    Runnable runnable;
-    URL image = null;
-    URL source = null;
-    TextView txtTotalTime;
-    TextView txtCurrentTime;
-    ImageButton replay;
-    ImageButton forward;
-    int timeSkip;
+    private Boolean playing = false;
+    private Boolean initialStage = true;
+    private MediaPlayer mediaPlayer;
+    private SeekBar seekBar;
+    private ImageButton audio;
+    private Runnable runnable;
+    private URL source = null;
+    private TextView txtCurrentTime;
+    private ItemTouchHelper touchHelper;
+    private Collection collection;
+    private Episode episode;
+    private View view;
+    private Handler handler;
+    private int currentEpisode;
+    private boolean reversed;
+    private ArrayList<Episode> queue;
+    private QueueAdapter adapter;
+    private TextView txtEpisodeTitle;
+    private TextView txtTotalTime;
 
-    public static PlayFragment newInstance(Episode e, Collection c) {
+    public static PlayFragment newInstance(Episode e, Collection c, int episodeNumber, boolean reversed) {
         PlayFragment fragment = new PlayFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("episode", e);
         bundle.putSerializable("collection", c);
+        bundle.putInt("episodeNumber", episodeNumber);
+        bundle.putBoolean("reversed", reversed);
         fragment.setArguments(bundle);
         return fragment;
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_play, container, false);
-
-        Bundle arguments = getArguments();
-
-        timeSkip = 10 * 1000;
-
-        if(arguments != null) {
-            Collection c = (Collection) getArguments().getSerializable("collection");
-            if(c != null) {
-                image = c.getImage();
-                TextView txtPodcastName = view.findViewById(R.id.txtPodcastName);
-                txtPodcastName.setText(c.getTitle());
-                txtPodcastName.setSelected(true);
-            }
-        }
-        if(image != null) {
-            ImageView imgPlayPodcast = view.findViewById(R.id.imgPlayingPodcast);
-            new LoadImageTask(imgPlayPodcast).execute(image);
-        }
+        view = inflater.inflate(R.layout.fragment_play, container, false);
 
         handler = new Handler();
-        seekBar = view.findViewById(R.id.seekBar);
 
+        /*TODO: Get this information passed through the database*/
+        Bundle arguments = getArguments();
+        if(arguments != null) {
+            collection = (Collection) getArguments().getSerializable("collection");
+            episode = (Episode) getArguments().getSerializable("episode");
+            currentEpisode = getArguments().getInt("episodeNumber");
+            reversed = getArguments().getBoolean("reversed");
+        }
+
+        seekBar = view.findViewById(R.id.seekbarEpisode);
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean input) {
@@ -90,22 +92,8 @@ public class PlayFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        audio = view.findViewById(R.id.btnPlayPause);
+        audio = view.findViewById(R.id.ibPlayPause);
         audio.setEnabled(false);
-        if(arguments != null) {
-            Episode e = (Episode) getArguments().getSerializable("episode");
-            if(e != null) {
-                TextView txtEpisodeTitle = view.findViewById(R.id.txtEpisodeTitle);
-                txtEpisodeTitle.setText(e.getTitle());
-                txtEpisodeTitle.setSelected(true);
-                txtCurrentTime = view.findViewById(R.id.txtCurrentTime);
-                txtTotalTime = view.findViewById(R.id.txtTotalTime);
-
-                txtTotalTime.setText(e.getDurationText());
-                source = e.getLink();
-                audio.setEnabled(true);
-            }
-        }
         Log.d("Play", "source: " + source);
         audio.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,7 +104,6 @@ public class PlayFragment extends Fragment {
                     }
                     else{
                         if (!mediaPlayer.isPlaying()) {
-                            //playCycle();
                             mediaPlayer.start();
                         }
                     }
@@ -133,36 +120,103 @@ public class PlayFragment extends Fragment {
             }
         });
 
-        replay = view.findViewById(R.id.btnReplay);
-        replay.setOnClickListener(new View.OnClickListener(){
-           public void onClick(View v){
-               if (mediaPlayer != null)
-                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - timeSkip);
-           }
-        });
-
-        forward = view.findViewById(R.id.btnForward);
-        forward.setOnClickListener(new View.OnClickListener(){
-           public void onClick(View v){
-               if (mediaPlayer != null)
-                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + timeSkip);
-           }
-        });
+        /*TODO: Do something with left and right podcast buttons*/
 
         return view;
     }
 
-    /*@Override
-    public void onPause(){
-        super.onPause();
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(episode != null && collection != null) {
+            txtEpisodeTitle = view.findViewById(R.id.txtEpisodeTitle);
+            txtEpisodeTitle.setText(episode.getTitle());
+            txtEpisodeTitle.setSelected(true);
+            txtCurrentTime = view.findViewById(R.id.txtCurrentTime);
 
-        if (mediaPlayer != null){
-            mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;
+            txtTotalTime = view.findViewById(R.id.txtTotalTime);
+            txtTotalTime.setText(episode.getDurationText());
+            source = episode.getLink();
+            audio.setEnabled(true);
+
+            queue = collection.getEpisodes();
+            if(reversed) {
+                currentEpisode = queue.size() - currentEpisode - 1;
+                Collections.reverse(queue);
+            }
+
+            URL image = collection.getImage();
+            if(image != null) {
+                ImageView imgPlayPodcast = view.findViewById(R.id.imgPodcast);
+                new LoadImageTask(imgPlayPodcast).execute(image);
+            }
+
+            TextView txtPodcastName = view.findViewById(R.id.txtPodcastTitle);
+            txtPodcastName.setText(collection.getTitle());
+            txtPodcastName.setSelected(true);
+
+            RecyclerView rvQueue = view.findViewById(R.id.rvQueue);
+            rvQueue.setHasFixedSize(true);
+            rvQueue.setLayoutManager(new LinearLayoutManager(view.getContext()));
+            adapter = new QueueAdapter();
+            rvQueue.setAdapter(adapter);
+            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+            touchHelper = new ItemTouchHelper(callback);
+            touchHelper.attachToRecyclerView(rvQueue);
+
+            ImageButton previous = view.findViewById(R.id.ibPrevious);
+            previous.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    /*TODO: Ensure media player handles episode switch properly*/
+                    if(currentEpisode - 1 >= 0) {
+                        currentEpisode--;
+                        initialStage = true; //some other stuff necessary probably
+                        episode = queue.get(currentEpisode);
+                        source = episode.getLink();
+                        txtEpisodeTitle.setText(episode.getTitle());
+                        txtTotalTime.setText(episode.getDurationText());
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
+
+            ImageButton next = view.findViewById(R.id.ibNext);
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    /*TODO: Ensure media player handles episode switch properly*/
+                    if(currentEpisode + 1 < queue.size()) {
+                        currentEpisode++;
+                        initialStage = true; //some other stuff necessary probably
+                        episode = queue.get(currentEpisode);
+                        source = episode.getLink();
+                        txtEpisodeTitle.setText(episode.getTitle());
+                        txtTotalTime.setText(episode.getDurationText());
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
         }
-    }*/
 
+        /*TODO: Use settings to get this value*/
+        final int timeSkip = 10;
+        ImageButton replay = view.findViewById(R.id.ibReplay);
+        replay.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if (mediaPlayer != null)
+                    mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - timeSkip * 1000);
+            }
+        });
+
+        ImageButton forward = view.findViewById(R.id.ibSkip);
+        forward.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if (mediaPlayer != null)
+                    mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + timeSkip * 1000);
+            }
+        });
+    }
 
     class LoadImageTask extends AsyncTask<URL, Void, Bitmap> {
         private Exception e;
@@ -183,7 +237,6 @@ public class PlayFragment extends Fragment {
 
         protected void onPostExecute(Bitmap bitmap) {
             if(e != null) {
-                //Handle errors in loading an image
                 Log.e("PlayFragment", Log.getStackTraceString(e));
             }
             else {
@@ -195,29 +248,22 @@ public class PlayFragment extends Fragment {
     class Time extends AsyncTask<String, Void, Boolean>{
         @Override
         protected Boolean doInBackground(String... strings){
-            Boolean prepared = false;
             int milliseconds;
+            long minutes;
             while(mediaPlayer != null){
                 milliseconds = mediaPlayer.getCurrentPosition();
-                txtCurrentTime.setText(String.format("%d:%02d",
-                        TimeUnit.MILLISECONDS.toMinutes(milliseconds),
-                        TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds))
+                minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
+                txtCurrentTime.setText(String.format(Locale.getDefault(), "%d:%02d",
+                        minutes, TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                                TimeUnit.MINUTES.toSeconds(minutes)
                 ));
 
                 if (mediaPlayer.isPlaying()){
-
                     seekBar.setProgress(mediaPlayer.getCurrentPosition());
-                    /*runnable = new Runnable(){
-                        @Override
-                        public void run(){
-                            playCycle();
-                        }
-                    };*/
                     handler.postDelayed(runnable, 1000);
                 }
             }
-            return prepared;
+            return false;
         }
 
     }
@@ -267,9 +313,6 @@ public class PlayFragment extends Fragment {
         protected void onPostExecute(Boolean aBoolean){
             super.onPostExecute(aBoolean);
 
-            //seekBar.setMax(mediaPlayer.getDuration());
-            //playCycle();
-
             int milliseconds = mediaPlayer.getDuration();
             Log.d("TIME_SET", "in seconds" + TimeUnit.MILLISECONDS.toSeconds(milliseconds));
             Log.d("TIME_SET", "in hours" + TimeUnit.HOURS.toSeconds(TimeUnit.MILLISECONDS.toHours(milliseconds)));
@@ -292,6 +335,128 @@ public class PlayFragment extends Fragment {
             progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("Buffering...");
             progressDialog.show();
+        }
+    }
+
+    class QueueAdapter extends RecyclerView.Adapter<ViewHolder> {
+
+        public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_podcast_episode, parent, false);
+            return new ViewHolder(v);
+        }
+
+        public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+            ImageButton ibLeftEpisode = holder.view.findViewById(R.id.ibLeftEpisode);
+            ibLeftEpisode.setImageResource(R.drawable.ic_remove_24dp);
+            ibLeftEpisode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemDismiss(holder.getAdapterPosition());
+                }
+            });
+
+            TextView txtEpisodeTitle = holder.view.findViewById(R.id.txtEpisodeTitle);
+            txtEpisodeTitle.setText(queue.get(position + currentEpisode + 1).getTitle());
+
+            /*TODO: Set queue item's current time from database*/
+
+            TextView txtTotalTime = holder.view.findViewById(R.id.txtTotalTime);
+            txtTotalTime.setText(queue.get(position + currentEpisode + 1).getDurationText());
+
+            ImageButton ibRightEpisode = holder.view.findViewById(R.id.ibRightEpisode);
+            ibRightEpisode.setImageResource(R.drawable.ic_drag_handle_24dp);
+            ibRightEpisode.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                        touchHelper.startDrag(holder);
+                    }
+                    return false;
+                }
+            });
+
+            final TextView txtEpisodeTitleInner = view.findViewById(R.id.txtEpisodeTitle);
+            final TextView txtTotalTimeInner = view.findViewById(R.id.txtTotalTime);
+
+            holder.view.setOnClickListener( new View.OnClickListener() {
+                public void onClick(View view) {
+                    /*TODO: Set current episode to the clicked episode and adjust the queue list*/
+                    currentEpisode = holder.getAdapterPosition() + currentEpisode + 1;
+                    initialStage = true; //some other stuff necessary probably
+                    episode = queue.get(currentEpisode);
+                    source = episode.getLink();
+                    txtEpisodeTitleInner.setText(episode.getTitle());
+                    txtTotalTimeInner.setText(episode.getDurationText());
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        public int getItemCount() {
+            return queue.size() - currentEpisode - 1;
+        }
+
+        public void onItemDismiss(int position) {
+            queue.remove(position + currentEpisode + 1);
+            notifyItemRemoved(position);
+        }
+
+        public boolean onItemMove(int fromPosition, int toPosition) {
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(queue, i + currentEpisode + 1, i + currentEpisode + 1 + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(queue, i + currentEpisode + 1, i + currentEpisode + 1 - 1);
+                }
+            }
+            notifyItemMoved(fromPosition, toPosition);
+            return true;
+        }
+    }
+
+    public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
+
+        private final QueueAdapter mAdapter;
+
+        ItemTouchHelperCallback(QueueAdapter adapter) {
+            mAdapter = adapter;
+        }
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return false;
+        }
+
+        @Override
+        public boolean isItemViewSwipeEnabled() {
+            return false;
+        }
+
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                              RecyclerView.ViewHolder target) {
+            return mAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        }
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        private View view;
+
+        ViewHolder(View v) {
+            super(v);
+            view = v;
         }
     }
 }

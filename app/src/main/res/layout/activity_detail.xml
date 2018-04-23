@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".DetailActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <ImageView
         android:id="@+id/imgPodcast"
         android:layout_width="0dp"
@@ -15,15 +27,15 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="@string/imgPodcast"
+        android:contentDescription="@string/podcast_image"
         app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineAddFeed"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineDetail"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarDetail"
         app:srcCompat="@android:color/holo_blue_dark" />
 
     <TextView
-        android:id="@+id/txtPodcastName"
+        android:id="@+id/txtPodcastTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -36,8 +48,8 @@
         android:textColor="@color/textPrimary"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guidelineAddFeed"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/guidelineDetail"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarDetail" />
 
     <TextView
         android:id="@+id/txtPodcastDescription"
@@ -55,7 +67,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btnAddRemove"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imgPodcast"
-        app:layout_constraintTop_toBottomOf="@+id/txtPodcastName" />
+        app:layout_constraintTop_toBottomOf="@+id/txtPodcastTitle" />
 
     <Button
         android:id="@+id/btnAddRemove"
@@ -66,13 +78,13 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
-        android:text="Add"
-        app:layout_constraintBottom_toTopOf="@+id/separator"
+        android:text="@string/add"
+        app:layout_constraintBottom_toTopOf="@+id/separatorDetail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imgPodcast" />
 
     <View
-        android:id="@+id/separator"
+        android:id="@+id/separatorDetail"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@color/colorPrimaryDark"
@@ -96,7 +108,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imgPodcast" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/guidelineAddFeed"
+        android:id="@+id/guidelineDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
