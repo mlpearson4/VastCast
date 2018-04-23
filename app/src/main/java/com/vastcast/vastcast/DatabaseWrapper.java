@@ -28,12 +28,14 @@ public class DatabaseWrapper {
         if(myData==null){
            Log.d("DatabaseWrapper", "please no");
         }
-        myData.setValue(col);
+        //read from db to see if source is in db already
+
+        myData.push().setValue(col);
         //get Collection ID
         //=myData.getRef(col);
         //Put collection ID into Users Library
-
         //myRef.child("Users").child(userID).child("Library").push().setValue(col);
+
     }
     public static void addToQueue(Collection col){
         myRef.child("Users").child(userID).child("Queue").push().setValue(col);
