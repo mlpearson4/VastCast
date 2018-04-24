@@ -3,6 +3,14 @@ package com.vastcast.vastcast;
 import android.util.Log;
 import android.util.Xml;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -25,16 +33,15 @@ Top Scallops - "https://rss.simplecast.com/podcasts/1497/rss"
 
 public class RSSFetcher {
     public static Collection fetch(URL source) throws IOException, XmlPullParserException {
-        InputStream in = source.openStream();
-        XmlPullParser parser = Xml.newPullParser();
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-        parser.setInput(in, null);
-        parser.nextTag();
-        Collection c = readRSS(parser, source);
-        in.close();
-        //Does this need to be static? Database Wrapper functions can't be static
-        DatabaseWrapper.addCollection(c);
-        return c;
+            InputStream in = source.openStream();
+            XmlPullParser parser = Xml.newPullParser();
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(in, null);
+            parser.nextTag();
+            Collection c = readRSS(parser, source);
+            in.close();
+            DatabaseWrapper.addCollection(c);
+            return c;
     }
 
     private static Collection readRSS(XmlPullParser parser, URL source) throws XmlPullParserException, IOException {

@@ -14,30 +14,63 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public class AddFeedActivity extends AppCompatActivity {
     private EditText txtUrl;
+    private static DatabaseReference myData;
+    private static DatabaseReference myRef;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_feed);
-
         Toolbar toolbar = findViewById(R.id.toolbarAddFeed);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if(ab != null) {
-            /*TODO: Have Up Direct to Discover Page*/
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("currentPage").setValue(0);
+            }
             ab.setDisplayHomeAsUpEnabled(true);
         }
-
         Button btnEnterUrl = findViewById(R.id.btnEnterUrl);
         txtUrl = findViewById(R.id.txtUrl);
         btnEnterUrl.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                new RetrieveFeedTask().execute(txtUrl.getText().toString());
+                myRef= FirebaseDatabase.getInstance().getReference();
+                myData=myRef.child("Database");
+                myData.orderByChild("source").equalTo(txtUrl.getText().toString()).addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            Collection d= new Collection ();
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Iterable <DataSnapshot> datasnap = dataSnapshot.getChildren();
+                                for(DataSnapshot data : datasnap) {
+                                    d = data.getValue(Collection.class);
+                                }
+                                if (d == null) {
+                                    new RetrieveFeedTask().execute(txtUrl.getText().toString());
+                                }
+                                else{
+                                    Intent i = new Intent(AddFeedActivity.this, DetailActivity.class);
+                                    i.putExtra("podcast", d);
+                                    AddFeedActivity.this.startActivity(i);
+                                }
+                            }
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.d("DatabaseWrapper", "getCollection:onCancelled", databaseError.toException());
+                            }
+                        });
             }
         });
     }
