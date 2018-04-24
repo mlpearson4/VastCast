@@ -50,27 +50,23 @@ public class AddFeedActivity extends AppCompatActivity {
             public void onClick(View view) {
                 myRef= FirebaseDatabase.getInstance().getReference();
                 myData=myRef.child("Database");
-                myData.orderByChild("source").equalTo(txtUrl.getText().toString()).addListenerForSingleValueEvent(
-                        new ValueEventListener() {
-                            Collection d= new Collection ();
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Iterable <DataSnapshot> datasnap = dataSnapshot.getChildren();
-                                for(DataSnapshot data : datasnap) {
-                                    d = data.getValue(Collection.class);
-                                }
-                                if (d == null) {
-                                    new RetrieveFeedTask().execute(txtUrl.getText().toString());
-                                }
-                                else{
-                                    Intent i = new Intent(AddFeedActivity.this, DetailActivity.class);
-                                    i.putExtra("podcast", d);
-                                    AddFeedActivity.this.startActivity(i);
-                                }
-                            }
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.d("DatabaseWrapper", "getCollection:onCancelled", databaseError.toException());
-                            }
-                        });
+                myData.orderByChild("source").equalTo(txtUrl.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Collection c = null;
+                        for(DataSnapshot data : dataSnapshot.getChildren()) {
+                            c = data.getValue(Collection.class);
+                        }
+                        if(c == null) {
+                            new RetrieveFeedTask().execute(txtUrl.getText().toString());
+                        }
+                        else {
+                            Intent i = new Intent(AddFeedActivity.this, DetailActivity.class);
+                            i.putExtra("podcast", c);
+                            AddFeedActivity.this.startActivity(i);
+                        }
+                    }
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
             }
         });
     }
