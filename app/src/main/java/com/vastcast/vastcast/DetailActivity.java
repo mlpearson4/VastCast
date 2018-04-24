@@ -22,6 +22,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.net.URL;
 
 public class DetailActivity extends AppCompatActivity {
@@ -35,6 +39,10 @@ public class DetailActivity extends AppCompatActivity {
         if(ab != null) {
             /*TODO: Have Up Direct to Manage Page*/
             //DatabaseWrapper.directToPage(2);
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("currentPage").setValue(2);
+            }
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
