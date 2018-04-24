@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,7 +38,10 @@ public class AddFeedActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if(ab != null) {
-            /*TODO: Have Up Direct to Discover Page*/
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("currentPage").setValue(0);
+            }
             ab.setDisplayHomeAsUpEnabled(true);
         }
         Button btnEnterUrl = findViewById(R.id.btnEnterUrl);
