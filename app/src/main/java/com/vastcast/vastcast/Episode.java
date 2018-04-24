@@ -9,6 +9,9 @@ public class Episode implements Serializable {
     private int duration;
     private String link;
 
+    public Episode(){
+
+    }
     public Episode(String title, String description, int duration, String link) {
         this.title = title;
         this.description = description;
