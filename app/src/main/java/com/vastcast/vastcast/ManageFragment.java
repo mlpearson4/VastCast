@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,14 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.net.URL;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+
+import java.net.URL;
+import java.util.ArrayList;
 
 public class ManageFragment extends Fragment {
 
@@ -45,7 +45,6 @@ public class ManageFragment extends Fragment {
                 ArrayList<Collection> podcasts = new ArrayList<Collection>();
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     Collection thisPodcast = ds.getValue(Collection.class);
-                    Log.d ("ManageFragment", thisPodcast.getTitle());
                     podcasts.add(thisPodcast);
                 }
 
@@ -92,7 +91,6 @@ public class ManageFragment extends Fragment {
 
             // Get and set the image
             URL image = podcasts.get(position).makeImage();
-            Log.d("ManageFragment", image.toString());
             new LoadImageTask(holder.imgPodcast).execute(image);
         }
 
@@ -123,7 +121,6 @@ public class ManageFragment extends Fragment {
         // When a podcast is clicked, launch DetailActivity
         public void onItemClick(View view, int position) {
             Collection podcast = podcasts.get(position);
-            Log.i("ManageFragment", "You clicked podcast " + podcast.getTitle().toString());
             Intent i = new Intent(ManageFragment.this.getActivity(), DetailActivity.class);
             i.putExtra("podcast", podcast);
             ManageFragment.this.startActivity(i);

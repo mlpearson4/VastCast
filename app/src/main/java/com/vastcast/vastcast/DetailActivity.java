@@ -24,11 +24,13 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.net.URL;
 
 public class DetailActivity extends AppCompatActivity {
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -37,12 +39,6 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if(ab != null) {
-            /*TODO: Have Up Direct to Manage Page*/
-            //DatabaseWrapper.directToPage(2);
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user != null) {
-                FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("currentPage").setValue(2);
-            }
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -131,14 +127,20 @@ public class DetailActivity extends AppCompatActivity {
 
             holder.view.setOnClickListener( new View.OnClickListener() {
                 public void onClick(View view) {
-                    /*TODO: Change to pass episode to play through database*/
-                    Intent i = new Intent(DetailActivity.this, MainActivity.class);
-                    i.putExtra("toPlay", true);
-                    i.putExtra("currentPlaylist", podcast);
-                    i.putExtra("currentEpisode", podcast.getEpisodes().get(holder.getAdapterPosition()));
-                    i.putExtra("currentEpisodeNumber", holder.getAdapterPosition());
-                    i.putExtra("reversed", false);
-                    DetailActivity.this.startActivity(i);
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if(user != null) {
+                        DatabaseReference userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+                        userData.child("currentPage").setValue(1);
+                        userData.child("Queue").child("currentPodcast").setValue(podcast);
+                        userData.child("Queue").child("currentEpisode").setValue(holder.getAdapterPosition());
+                        /*TODO: add ability to filter or replace below with setting*/
+                        userData.child("Queue").child("reversed").setValue(false);
+                        Intent i = new Intent(DetailActivity.this, MainActivity.class);
+                        DetailActivity.this.startActivity(i);
+                    }
+                    else {
+                        Log.e("DetailActivity", "Tried to play episode without being logged in");
+                    }
                 }
             });
 

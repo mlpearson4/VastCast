@@ -53,7 +53,6 @@ public class DiscoverFragment extends Fragment {
                 ArrayList<Collection> podcasts = new ArrayList<Collection>();
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     Collection thisPodcast = ds.getValue(Collection.class);
-                    Log.d ("DiscoverFragment", thisPodcast.getTitle());
                     podcasts.add(thisPodcast);
                 }
 
@@ -100,7 +99,6 @@ public class DiscoverFragment extends Fragment {
 
             // Get and set the image
             URL image = podcasts.get(position).makeImage();
-            Log.d("DiscoverFragment", image.toString());
             new DiscoverFragment.LoadImageTask(holder.imgPodcast).execute(image);
         }
 
@@ -131,7 +129,6 @@ public class DiscoverFragment extends Fragment {
         // When a podcast is clicked, launch DetailActivity
         public void onItemClick(View view, int position) {
             Collection podcast = podcasts.get(position);
-            Log.i("DiscoverFragment", "You clicked podcast " + podcast.getTitle().toString());
             Intent i = new Intent(DiscoverFragment.this.getActivity(), DetailActivity.class);
             i.putExtra("podcast", podcast);
             DiscoverFragment.this.startActivity(i);

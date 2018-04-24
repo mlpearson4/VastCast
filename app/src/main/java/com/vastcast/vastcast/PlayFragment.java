@@ -24,6 +24,14 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,41 +49,23 @@ public class PlayFragment extends Fragment {
     private URL source = null;
     private TextView txtCurrentTime;
     private ItemTouchHelper touchHelper;
-    private Collection collection;
-    private Episode episode;
     private View view;
     private Handler handler;
-    private int currentEpisode;
-    private boolean reversed;
-    private ArrayList<Episode> queue;
     private QueueAdapter adapter;
     private TextView txtEpisodeTitle;
     private TextView txtTotalTime;
-
-    public static PlayFragment newInstance(Episode e, Collection c, int episodeNumber, boolean reversed) {
-        PlayFragment fragment = new PlayFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("episode", e);
-        bundle.putSerializable("collection", c);
-        bundle.putInt("episodeNumber", episodeNumber);
-        bundle.putBoolean("reversed", reversed);
-        fragment.setArguments(bundle);
-        return fragment;
-    }
+    private Collection currentPodcast;
+    private Integer currentEpisode;
+    private Boolean reversed;
+    private ArrayList<Episode> queue;
+    private FirebaseUser user;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_play, container, false);
 
         handler = new Handler();
 
-        /*TODO: Get this information passed through the database*/
-        Bundle arguments = getArguments();
-        if(arguments != null) {
-            collection = (Collection) getArguments().getSerializable("collection");
-            episode = (Episode) getArguments().getSerializable("episode");
-            currentEpisode = getArguments().getInt("episodeNumber");
-            reversed = getArguments().getBoolean("reversed");
-        }
+
 
         seekBar = view.findViewById(R.id.seekbarEpisode);
 
@@ -120,85 +110,6 @@ public class PlayFragment extends Fragment {
             }
         });
 
-        /*TODO: Do something with left and right podcast buttons*/
-
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if(episode != null && collection != null) {
-            txtEpisodeTitle = view.findViewById(R.id.txtEpisodeTitle);
-            txtEpisodeTitle.setText(episode.getTitle());
-            txtEpisodeTitle.setSelected(true);
-            txtCurrentTime = view.findViewById(R.id.txtCurrentTime);
-
-            txtTotalTime = view.findViewById(R.id.txtTotalTime);
-            txtTotalTime.setText(episode.getDurationText());
-            source = episode.makeLink();
-            audio.setEnabled(true);
-
-            queue = collection.getEpisodes();
-            if(reversed) {
-                currentEpisode = queue.size() - currentEpisode - 1;
-                Collections.reverse(queue);
-            }
-
-            URL image = collection.makeImage();
-            if(image != null) {
-                ImageView imgPlayPodcast = view.findViewById(R.id.imgPodcast);
-                new LoadImageTask(imgPlayPodcast).execute(image);
-            }
-
-            TextView txtPodcastName = view.findViewById(R.id.txtPodcastTitle);
-            txtPodcastName.setText(collection.getTitle());
-            txtPodcastName.setSelected(true);
-
-            RecyclerView rvQueue = view.findViewById(R.id.rvQueue);
-            rvQueue.setHasFixedSize(true);
-            rvQueue.setLayoutManager(new LinearLayoutManager(view.getContext()));
-            adapter = new QueueAdapter();
-            rvQueue.setAdapter(adapter);
-            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-            touchHelper = new ItemTouchHelper(callback);
-            touchHelper.attachToRecyclerView(rvQueue);
-
-            ImageButton previous = view.findViewById(R.id.ibPrevious);
-            previous.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    /*TODO: Ensure media player handles episode switch properly*/
-                    if(currentEpisode - 1 >= 0) {
-                        currentEpisode--;
-                        initialStage = true; //some other stuff necessary probably
-                        episode = queue.get(currentEpisode);
-                        source = episode.makeLink();
-                        txtEpisodeTitle.setText(episode.getTitle());
-                        txtTotalTime.setText(episode.getDurationText());
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-            });
-
-            ImageButton next = view.findViewById(R.id.ibNext);
-            next.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    /*TODO: Ensure media player handles episode switch properly*/
-                    if(currentEpisode + 1 < queue.size()) {
-                        currentEpisode++;
-                        initialStage = true; //some other stuff necessary probably
-                        episode = queue.get(currentEpisode);
-                        source = episode.makeLink();
-                        txtEpisodeTitle.setText(episode.getTitle());
-                        txtTotalTime.setText(episode.getDurationText());
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-            });
-        }
-
         /*TODO: Use settings to get this value*/
         final int timeSkip = 10;
         ImageButton replay = view.findViewById(R.id.ibReplay);
@@ -216,6 +127,124 @@ public class PlayFragment extends Fragment {
                     mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + timeSkip * 1000);
             }
         });
+
+        /*TODO: Do something with left and right podcast buttons*/
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Queue");
+            ref.addValueEventListener(new ValueEventListener() {
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.getValue() != null) {
+                        for (DataSnapshot item : dataSnapshot.getChildren()) {
+                            switch(item.getKey()) {
+                                case "currentEpisode": {
+                                    currentEpisode = item.getValue(Integer.class);
+                                    break;
+                                }
+                                case "currentPodcast": {
+                                    currentPodcast = item.getValue(Collection.class);
+                                    if(currentPodcast != null) {
+                                        queue = currentPodcast.getEpisodes();
+                                    }
+                                    break;
+                                }
+                                case "reversed": {
+                                    reversed = item.getValue(Boolean.class);
+                                    break;
+                                }
+                            }
+                        }
+                        if(currentEpisode != null && currentPodcast != null && reversed != null) {
+                            if(reversed) {
+                                currentEpisode = queue.size() - currentEpisode - 1;
+                                Collections.reverse(queue);
+                            }
+
+                            txtEpisodeTitle = view.findViewById(R.id.txtEpisodeTitle);
+                            txtEpisodeTitle.setText(currentPodcast.getEpisodes().get(currentEpisode).getTitle());
+                            txtEpisodeTitle.setSelected(true);
+                            txtCurrentTime = view.findViewById(R.id.txtCurrentTime);
+
+                            txtTotalTime = view.findViewById(R.id.txtTotalTime);
+                            txtTotalTime.setText(currentPodcast.getEpisodes().get(currentEpisode).getDurationText());
+                            source = currentPodcast.getEpisodes().get(currentEpisode).makeLink();
+                            audio.setEnabled(true);
+
+                            URL image = currentPodcast.makeImage();
+                            if(image != null) {
+                                ImageView imgPlayPodcast = view.findViewById(R.id.imgPodcast);
+                                new LoadImageTask(imgPlayPodcast).execute(image);
+                            }
+
+                            TextView txtPodcastName = view.findViewById(R.id.txtPodcastTitle);
+                            txtPodcastName.setText(currentPodcast.getTitle());
+                            txtPodcastName.setSelected(true);
+
+                            RecyclerView rvQueue = view.findViewById(R.id.rvQueue);
+                            rvQueue.setHasFixedSize(true);
+                            rvQueue.setLayoutManager(new LinearLayoutManager(view.getContext()));
+                            adapter = new QueueAdapter();
+                            rvQueue.setAdapter(adapter);
+                            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+                            touchHelper = new ItemTouchHelper(callback);
+                            touchHelper.attachToRecyclerView(rvQueue);
+
+                            ImageButton previous = view.findViewById(R.id.ibPrevious);
+                            previous.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    /*TODO: Ensure media player handles episode switch properly*/
+                                    if(currentEpisode - 1 >= 0) {
+                                        currentEpisode--;
+                                        initialStage = true; //some other stuff necessary probably
+                                        Episode episode = queue.get(currentEpisode);
+                                        source = episode.makeLink();
+                                        txtEpisodeTitle.setText(episode.getTitle());
+                                        txtTotalTime.setText(episode.getDurationText());
+                                        adapter.notifyDataSetChanged();
+                                        user = FirebaseAuth.getInstance().getCurrentUser();
+                                        if(user != null) {
+                                            DatabaseReference userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+                                            userData.child("Queue").child("currentEpisode").setValue(currentEpisode);
+                                        }
+                                    }
+                                }
+                            });
+
+                            ImageButton next = view.findViewById(R.id.ibNext);
+                            next.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    /*TODO: Ensure media player handles episode switch properly*/
+                                    if(currentEpisode + 1 < queue.size()) {
+                                        currentEpisode++;
+                                        initialStage = true; //some other stuff necessary probably
+                                        Episode episode = queue.get(currentEpisode);
+                                        source = episode.makeLink();
+                                        txtEpisodeTitle.setText(episode.getTitle());
+                                        txtTotalTime.setText(episode.getDurationText());
+                                        adapter.notifyDataSetChanged();
+                                        user = FirebaseAuth.getInstance().getCurrentUser();
+                                        if(user != null) {
+                                            DatabaseReference userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+                                            userData.child("Queue").child("currentEpisode").setValue(currentEpisode);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+                public void onCancelled(DatabaseError databaseError) {}
+            });
+        }
     }
 
     class LoadImageTask extends AsyncTask<URL, Void, Bitmap> {
@@ -383,11 +412,16 @@ public class PlayFragment extends Fragment {
                     /*TODO: Set current episode to the clicked episode and adjust the queue list*/
                     currentEpisode = holder.getAdapterPosition() + currentEpisode + 1;
                     initialStage = true; //some other stuff necessary probably
-                    episode = queue.get(currentEpisode);
+                    Episode episode = queue.get(currentEpisode);
                     source = episode.makeLink();
                     txtEpisodeTitleInner.setText(episode.getTitle());
                     txtTotalTimeInner.setText(episode.getDurationText());
                     adapter.notifyDataSetChanged();
+                    user = FirebaseAuth.getInstance().getCurrentUser();
+                    if(user != null) {
+                        DatabaseReference userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+                        userData.child("Queue").child("currentEpisode").setValue(currentEpisode);
+                    }
                 }
             });
         }

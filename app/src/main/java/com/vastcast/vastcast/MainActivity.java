@@ -6,7 +6,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,36 +36,19 @@ public class MainActivity extends AppCompatActivity {
         vpMain.setAdapter(adapter);
         tlMain.setupWithViewPager(vpMain);
 
-        /*TODO: Determine the best way to direct MainActivity to the desired tab (Use Database?)*/
-
-        Log.d("MainActivity", "Start");
-        Intent i = getIntent();
-        if(i.hasExtra("toPlay")) {
-            Episode e = (Episode) i.getSerializableExtra("currentEpisode");
-            Collection c = (Collection) i.getSerializableExtra("currentPlaylist");
-            int episodeNumber = i.getIntExtra("currentEpisodeNumber", 0);
-            boolean reversed = i.getBooleanExtra("reversed", false);
-            adapter.setPlayArguments(e, c, episodeNumber, reversed);
-            vpMain.setCurrentItem(1);
-        }
-        else {
-            user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user != null) {
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("currentPage");
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Integer value = dataSnapshot.getValue(Integer.class);
-                        if(value != null) {
-                            vpMain.setCurrentItem(value);
-                        }
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("currentPage");
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Integer value = dataSnapshot.getValue(Integer.class);
+                    if(value != null) {
+                        vpMain.setCurrentItem(value);
                     }
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
-            }
+                }
+                public void onCancelled(DatabaseError databaseError) {}
+            });
         }
-
-
-
     }
 
     /*TODO: Add Search to Menu*/
