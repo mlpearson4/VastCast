@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     /*TODO: Add Search to Menu*/
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
         inflater.inflate(R.menu.menu_settings, menu);
         return true;
     }
