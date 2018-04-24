@@ -6,11 +6,22 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseUser user;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,13 +31,15 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(tbMain);
 
         TabLayout tlMain = findViewById(R.id.tlMain);
-        ViewPager vpMain = findViewById(R.id.vpMain);
+        final ViewPager vpMain = findViewById(R.id.vpMain);
         vpMain.addOnPageChangeListener(new CircularOnPageChangeListener(vpMain));
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tlMain.getContext(), tlMain.getTabCount());
         vpMain.setAdapter(adapter);
         tlMain.setupWithViewPager(vpMain);
 
         /*TODO: Determine the best way to direct MainActivity to the desired tab (Use Database?)*/
+
+        Log.d("MainActivity", "Start");
         Intent i = getIntent();
         if(i.hasExtra("toPlay")) {
             Episode e = (Episode) i.getSerializableExtra("currentEpisode");
@@ -36,6 +49,24 @@ public class MainActivity extends AppCompatActivity {
             adapter.setPlayArguments(e, c, episodeNumber, reversed);
             vpMain.setCurrentItem(1);
         }
+        else {
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("currentPage");
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Integer value = dataSnapshot.getValue(Integer.class);
+                        if(value != null) {
+                            vpMain.setCurrentItem(value);
+                        }
+                    }
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+            }
+        }
+
+
+
     }
 
     /*TODO: Add Search to Menu*/
@@ -80,6 +111,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 lastState = state;
+            }
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("currentPage").setValue(viewPager.getCurrentItem());
             }
         }
     }
