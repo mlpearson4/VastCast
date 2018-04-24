@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".DiscoverFragment">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvDiscover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddPodcast"
         android:layout_width="56dp"
