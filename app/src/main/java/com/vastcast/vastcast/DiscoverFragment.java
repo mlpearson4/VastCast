@@ -76,18 +76,16 @@ public class DiscoverFragment extends Fragment {
     class MyRecyclerViewAdapter extends RecyclerView.Adapter<DiscoverFragment.MyRecyclerViewAdapter.ViewHolder> {
 
         private ArrayList<Collection> podcasts = new ArrayList<Collection>();
-        private LayoutInflater inflater;
 
         // Data is passed into the constructor
         public MyRecyclerViewAdapter(Context context, ArrayList<Collection> data) {
-            this.inflater = LayoutInflater.from(context);
             this.podcasts = data;
         }
 
         // Inflates the cell layout from xml when needed
         @Override
         public DiscoverFragment.MyRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = inflater.inflate(R.layout.item_podcast, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_podcast, parent, false);
             DiscoverFragment.MyRecyclerViewAdapter.ViewHolder viewHolder = new DiscoverFragment.MyRecyclerViewAdapter.ViewHolder(view);
             return viewHolder;
         }
