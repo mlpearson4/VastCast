@@ -31,6 +31,7 @@ public class DiscoverFragment extends Fragment {
 
     DiscoverFragment.MyRecyclerViewAdapter adapter;
     private View view;
+    private ArrayList<String> uidKeys;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_discover, container, false);
@@ -51,9 +52,12 @@ public class DiscoverFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Collect all podcasts from database into an ArrayList
                 ArrayList<Collection> podcasts = new ArrayList<Collection>();
+                uidKeys = new ArrayList<String>();
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     Collection thisPodcast = ds.getValue(Collection.class);
+                    String thisKeys = ds.getKey();
                     podcasts.add(thisPodcast);
+                    uidKeys.add(thisKeys);
                 }
 
                 // RecyclerView setup with GridLayoutManager
@@ -130,6 +134,7 @@ public class DiscoverFragment extends Fragment {
         public void onItemClick(View view, int position) {
             Collection podcast = podcasts.get(position);
             Intent i = new Intent(DiscoverFragment.this.getActivity(), DetailActivity.class);
+            i.putExtra("uid", uidKeys.get(position));
             i.putExtra("podcast", podcast);
             DiscoverFragment.this.startActivity(i);
         }
