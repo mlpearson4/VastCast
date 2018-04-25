@@ -21,17 +21,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ImageButton;
-import android.widget.PopupMenu;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.net.URL;
 
 public class DetailActivity extends AppCompatActivity {
+
+    private String uid;
+    private FirebaseUser user;
+    private DatabaseReference userData;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +50,7 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         Intent i = getIntent();
+        uid = i.getStringExtra("uid");
         Collection podcast = (Collection) i.getSerializableExtra("podcast");
         ImageView imgPodcast = findViewById(R.id.imgPodcast);
         new LoadImageTask(imgPodcast).execute(podcast.makeImage());
@@ -55,8 +61,29 @@ public class DetailActivity extends AppCompatActivity {
         TextView txtPodcastDescription = findViewById(R.id.txtPodcastDescription);
         txtPodcastDescription.setText(podcast.getDescription());
 
-        Button btnAddRemove = findViewById(R.id.btnAddRemove);
+        final Button btnAddRemove = findViewById(R.id.btnAddRemove);
         btnAddRemove.setEnabled(false);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null) {
+            userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+            userData.child("Library").orderByValue().equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                public void onDataChange(final DataSnapshot dataSnapshot) {
+                    btnAddRemove.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(dataSnapshot != null) {
+                                dataSnapshot.getRef().removeValue();
+                            }
+                            else {
+                                userData.child("Library").push().setValue(uid);
+                            }
+                        }
+                    });
+                    btnAddRemove.setEnabled(true);
+                }
+                public void onCancelled(DatabaseError databaseError) {}
+            });
+        }
         /*TODO: Make Add/Remove affect library in database*/
 
         RecyclerView episodeList = findViewById(R.id.rvEpisodeList);
@@ -74,7 +101,8 @@ public class DetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionSettings:
-                //launch settings with an intent
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -129,13 +157,13 @@ public class DetailActivity extends AppCompatActivity {
 
             holder.view.setOnClickListener( new View.OnClickListener() {
                 public void onClick(View view) {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    user = FirebaseAuth.getInstance().getCurrentUser();
                     if(user != null) {
                         DatabaseReference userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
                         userData.child("currentPage").setValue(1);
+                        userData.child("Queue").child("uid").setValue(uid);
                         userData.child("Queue").child("currentPodcast").setValue(podcast);
                         userData.child("Queue").child("currentEpisode").setValue(holder.getAdapterPosition());
-                        /*TODO: add ability to filter or replace below with setting*/
                         userData.child("Queue").child("reversed").setValue(false);
                         Intent i = new Intent(DetailActivity.this, MainActivity.class);
                         DetailActivity.this.startActivity(i);
@@ -145,36 +173,6 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
             });
-
-            // This is a menu for the ibRightEpisode - discontinued, but here if we decide to add it back in
-            /*ImageButton ibRightEpisode = holder.view.findViewById(R.id.ibRightEpisode);
-            ibRightEpisode.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View view) {
-
-                    //creating a popup menu
-                    PopupMenu popup = new PopupMenu(getBaseContext(), view);
-                    //inflating menu from xml resource
-                    popup.inflate(R.menu.menu_detail);
-                    //adding click listener
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.menuOne:
-                                    Log.d("DetailActivity", "Menu 1 has been clicked");
-                                    //handle menu1 click
-                                    break;
-                            }
-                            return false;
-                        }
-                    });
-                    //displaying the popup
-                    popup.show();
-
-                }
-            });
-            */
 
             /*TODO: Do something with left and right episode buttons*/
         }

@@ -57,11 +57,16 @@ public class PlayFragment extends Fragment {
     private QueueAdapter adapter;
     private TextView txtEpisodeTitle;
     private TextView txtTotalTime;
+    private String podcastUID;
     private Collection currentPodcast;
     private Integer currentEpisode;
     private Boolean reversed;
     private ArrayList<Episode> queue;
     private FirebaseUser user;
+    private static DatabaseReference myRef;
+    private static DatabaseReference myUser;
+    private static String userID;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_play, container, false);
@@ -131,8 +136,6 @@ public class PlayFragment extends Fragment {
             }
         });
 
-        /*TODO: Do something with left and right podcast buttons*/
-
         return view;
     }
 
@@ -147,6 +150,10 @@ public class PlayFragment extends Fragment {
                     if(dataSnapshot.getValue() != null) {
                         for (DataSnapshot item : dataSnapshot.getChildren()) {
                             switch(item.getKey()) {
+                                case "uid":{
+                                    podcastUID = item.getValue(String.class);
+                                    break;
+                                }
                                 case "currentEpisode": {
                                     currentEpisode = item.getValue(Integer.class);
                                     break;
@@ -164,7 +171,7 @@ public class PlayFragment extends Fragment {
                                 }
                             }
                         }
-                        if(currentEpisode != null && currentPodcast != null && reversed != null) {
+                        if(podcastUID!=null && currentEpisode != null && currentPodcast != null && reversed != null) {
                             if(reversed) {
                                 currentEpisode = queue.size() - currentEpisode - 1;
                                 Collections.reverse(queue);
@@ -247,7 +254,6 @@ public class PlayFragment extends Fragment {
                             ibRightPodcast.setOnClickListener(new View.OnClickListener(){
                                 @Override
                                 public void onClick(View view) {
-
                                     //creating a popup menu
                                     PopupMenu popup = new PopupMenu(getContext(), view);
                                     //inflating menu from xml resource
@@ -270,6 +276,26 @@ public class PlayFragment extends Fragment {
                                     //displaying the popup
                                     popup.show();
 
+                                }
+                            });
+                            /*TODO: Do something with left and right podcast buttons*/
+                            //sends podcastUID to this played
+                            ImageButton lPod = view.findViewById(R.id.ibLeftPodcast);
+                            lPod.setOnClickListener(new View.OnClickListener(){
+                                public void onClick(View v){
+                                    myRef=FirebaseDatabase.getInstance().getReference();
+                                    user= FirebaseAuth.getInstance().getCurrentUser();
+                                    userID=user.getUid();
+                                    myUser=myRef.child("Users");
+                                    //make sure the podcastKey is added here which is the UID of the collections
+                                    myUser.child(userID).child("Played").child(podcastUID).child("episodeNum").setValue(queue.get(currentEpisode));
+                                    myUser.child(userID).child("Played").child(podcastUID).child("currentTime").setValue(txtCurrentTime);
+                                    if(myUser.child(userID).child("Played").child(podcastUID).child("playedStat")==null) {
+                                        myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(2);
+                                    }
+                                    else{
+                                        myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(0);
+                                    }
                                 }
                             });
                         }
