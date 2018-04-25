@@ -278,7 +278,7 @@ public class PlayFragment extends Fragment {
 
                                 }
                             });
-                            /*TODO: Do something with left and right podcast buttons*/
+
                             //sends podcastUID to this played
                             ImageButton lPod = view.findViewById(R.id.ibLeftPodcast);
                             lPod.setOnClickListener(new View.OnClickListener(){
@@ -286,16 +286,27 @@ public class PlayFragment extends Fragment {
                                     myRef=FirebaseDatabase.getInstance().getReference();
                                     user= FirebaseAuth.getInstance().getCurrentUser();
                                     userID=user.getUid();
-                                    myUser=myRef.child("Users");
-                                    //make sure the podcastKey is added here which is the UID of the collections
-                                    myUser.child(userID).child("Played").child(podcastUID).child("episodeNum").setValue(queue.get(currentEpisode));
-                                    myUser.child(userID).child("Played").child(podcastUID).child("currentTime").setValue(txtCurrentTime);
-                                    if(myUser.child(userID).child("Played").child(podcastUID).child("playedStat")==null) {
-                                        myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(2);
-                                    }
-                                    else{
-                                        myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(0);
-                                    }
+                                    myUser=myRef.child("Users").child(userID).child("Played").child(podcastUID);
+
+                                    myUser.child("episodeNum").setValue(queue.get(currentEpisode));
+                                  //Problem with line below.....
+                                    //  myUser.child("currentTime").setValue(txtCurrentTime);
+
+                                    myUser.orderByChild("playedStat").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                Integer c = dataSnapshot.child("playedStat").getValue(Integer.class);
+                                                if(c==null){
+                                                    myUser.child("playedStat").setValue(2);
+                                                }
+                                                else if(c==0 || c==1){
+                                                        myUser.child("playedStat").setValue(2);
+                                                }
+                                                else{
+                                                        myUser.child("playedStat").setValue(0);
+                                                }
+                                            }
+                                            public void onCancelled(DatabaseError databaseError) {}
+                                    });
                                 }
                             });
                         }

@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,13 +33,18 @@ public class ManageFragment extends Fragment {
     MyRecyclerViewAdapter adapter;
     private View view;
     private ArrayList<String> uidKeys;
+    private static FirebaseUser user;
+    private static String userID;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_manage, container, false);
 
         // Get DatabaseReference for all podcasts in database
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference valuesRef = rootRef.child("Database");
+        user= FirebaseAuth.getInstance().getCurrentUser();
+        userID=user.getUid();
+
+        DatabaseReference valuesRef = rootRef.child("User").child(userID).child("Library");
         ValueEventListener eventListener = new ValueEventListener() {
 
             @Override
