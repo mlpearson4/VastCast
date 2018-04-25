@@ -63,9 +63,7 @@ public class PlayFragment extends Fragment {
     private Boolean reversed;
     private ArrayList<Episode> queue;
     private FirebaseUser user;
-    private static DatabaseReference myRef;
-    private static DatabaseReference myUser;
-    private static String userID;
+    private static DatabaseReference userData;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -281,30 +279,47 @@ public class PlayFragment extends Fragment {
 
                             //sends podcastUID to this played
                             final ImageButton ibLeftPodcast = view.findViewById(R.id.ibLeftPodcast);
-                            ibLeftPodcast.setOnClickListener(new View.OnClickListener(){
-                                public void onClick(View v){
-                                    myRef=FirebaseDatabase.getInstance().getReference();
-                                    user= FirebaseAuth.getInstance().getCurrentUser();
-                                    if(user != null) {
-                                        userID=user.getUid();
-                                        myUser=myRef.child("Users").child(userID).child("Played").child(podcastUID).child(Integer.toString(currentEpisode));
-                                        myUser.orderByChild("playedStatus").addListenerForSingleValueEvent(new ValueEventListener() {
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                Integer c = dataSnapshot.child("playedStatus").getValue(Integer.class);
-                                                if(c==null || c == 1) {
-                                                    myUser.child("playedStatus").setValue(2);
-                                                    ibLeftPodcast.setImageResource(R.drawable.ic_diamond_filled_24dp);
-                                                }
-                                                else {
-                                                    myUser.removeValue();
-                                                    ibLeftPodcast.setImageResource(R.drawable.ic_diamond_hollow_24dp);
+                            user = FirebaseAuth.getInstance().getCurrentUser();
+                            if(user != null) {
+                                userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+                                final DatabaseReference episodePlayed = userData.child("Played").child(podcastUID).child(Integer.toString(currentEpisode));
+                                episodePlayed.addValueEventListener(new ValueEventListener() {
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        final Integer playedStatus = dataSnapshot.child("playedStatus").getValue(Integer.class);
+                                        if (playedStatus == null) {
+                                            ibLeftPodcast.setImageResource(R.drawable.ic_diamond_hollow_24dp);
+                                            txtCurrentTime.setText(R.string.zero_time);
+                                        }
+                                        else if (playedStatus == 1) {
+                                            ibLeftPodcast.setImageResource(R.drawable.ic_diamond_partial_24dp);
+                                            Integer currentTime = dataSnapshot.child("currentTime").getValue(Integer.class);
+                                            if (currentTime != null) {
+                                                long minutes = TimeUnit.SECONDS.toMinutes(currentTime);
+                                                txtCurrentTime.setText(String.format(Locale.getDefault(), "%d:%02d",
+                                                        minutes, currentTime -
+                                                                TimeUnit.MINUTES.toSeconds(minutes)
+                                                ));
+                                            }
+                                            /*TODO: Seek to current time*/
+                                        }
+                                        else {
+                                            ibLeftPodcast.setImageResource(R.drawable.ic_diamond_filled_24dp);
+                                        }
+                                        ibLeftPodcast.setOnClickListener(new View.OnClickListener() {
+                                            public void onClick(View v) {
+                                                if (playedStatus == null || playedStatus == 1) {
+                                                    episodePlayed.child("playedStatus").setValue(2);
+                                                    /*Todo: Skip to next episode, if last episode seekto end*/
+                                                } else {
+                                                    episodePlayed.removeValue();
+                                                    /*Todo: Seek episode to zero and pause playback*/
                                                 }
                                             }
-                                            public void onCancelled(DatabaseError databaseError) {}
                                         });
                                     }
-                                }
-                            });
+                                    public void onCancelled(DatabaseError databaseError) {}
+                                });
+                            }
                         }
                     }
                 }

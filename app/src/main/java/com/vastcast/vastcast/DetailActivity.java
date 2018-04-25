@@ -198,8 +198,6 @@ public class DetailActivity extends AppCompatActivity {
             user = FirebaseAuth.getInstance().getCurrentUser();
             if(user != null) {
                 userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
-                Log.d("DetailActivity", uid);
-                Log.d("DetailActivity", Integer.toString(position));
                 final DatabaseReference episodePlayed = userData.child("Played").child(uid).child(Integer.toString(position));
                 episodePlayed.addValueEventListener(new ValueEventListener() {
                     public void onDataChange(DataSnapshot dataSnapshot) {
