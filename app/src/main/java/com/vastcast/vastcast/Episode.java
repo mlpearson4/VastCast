@@ -39,7 +39,7 @@ public class Episode implements Serializable {
     public void setDuration(int duration){
         this.duration=duration;
     }
-    public String getDurationText() {
+    public String makeDurationText() {
         int seconds = duration % 60;
         int minutes = duration / 60;
         return Integer.toString(minutes) + ":" + String.format("%02d", seconds);

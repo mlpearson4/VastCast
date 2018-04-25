@@ -183,7 +183,7 @@ public class PlayFragment extends Fragment {
                             txtCurrentTime = view.findViewById(R.id.txtCurrentTime);
 
                             txtTotalTime = view.findViewById(R.id.txtTotalTime);
-                            txtTotalTime.setText(currentPodcast.getEpisodes().get(currentEpisode).getDurationText());
+                            txtTotalTime.setText(currentPodcast.getEpisodes().get(currentEpisode).makeDurationText());
                             source = currentPodcast.getEpisodes().get(currentEpisode).makeLink();
                             audio.setEnabled(true);
 
@@ -217,7 +217,7 @@ public class PlayFragment extends Fragment {
                                         Episode episode = queue.get(currentEpisode);
                                         source = episode.makeLink();
                                         txtEpisodeTitle.setText(episode.getTitle());
-                                        txtTotalTime.setText(episode.getDurationText());
+                                        txtTotalTime.setText(episode.makeDurationText());
                                         adapter.notifyDataSetChanged();
                                         user = FirebaseAuth.getInstance().getCurrentUser();
                                         if(user != null) {
@@ -239,7 +239,7 @@ public class PlayFragment extends Fragment {
                                         Episode episode = queue.get(currentEpisode);
                                         source = episode.makeLink();
                                         txtEpisodeTitle.setText(episode.getTitle());
-                                        txtTotalTime.setText(episode.getDurationText());
+                                        txtTotalTime.setText(episode.makeDurationText());
                                         adapter.notifyDataSetChanged();
                                         user = FirebaseAuth.getInstance().getCurrentUser();
                                         if(user != null) {
@@ -456,7 +456,7 @@ public class PlayFragment extends Fragment {
             /*TODO: Set queue item's current time from database*/
 
             TextView txtTotalTime = holder.view.findViewById(R.id.txtTotalTime);
-            txtTotalTime.setText(queue.get(position + currentEpisode + 1).getDurationText());
+            txtTotalTime.setText(queue.get(position + currentEpisode + 1).makeDurationText());
 
             ImageButton ibRightEpisode = holder.view.findViewById(R.id.ibRightEpisode);
             ibRightEpisode.setImageResource(R.drawable.ic_drag_handle_24dp);
@@ -481,7 +481,7 @@ public class PlayFragment extends Fragment {
                     Episode episode = queue.get(currentEpisode);
                     source = episode.makeLink();
                     txtEpisodeTitleInner.setText(episode.getTitle());
-                    txtTotalTimeInner.setText(episode.getDurationText());
+                    txtTotalTimeInner.setText(episode.makeDurationText());
                     adapter.notifyDataSetChanged();
                     user = FirebaseAuth.getInstance().getCurrentUser();
                     if(user != null) {
