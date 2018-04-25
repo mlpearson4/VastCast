@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.net.URL;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -80,6 +83,7 @@ public class DetailActivity extends AppCompatActivity {
                     for(DataSnapshot item : dataSnapshot.getChildren()) {
                         isAdded = true;
                         key = item.getKey();
+                        Log.d("DetailActivity", "Setting key:" + key);
                     }
                     if(isAdded) btnAddRemove.setText(R.string.remove);
                     btnAddRemove.setOnClickListener(new View.OnClickListener() {
@@ -162,7 +166,7 @@ public class DetailActivity extends AppCompatActivity {
             return new ViewHolder(v);
         }
 
-        public void onBindViewHolder(final @NonNull ViewHolder holder, int position) {
+        public void onBindViewHolder(final @NonNull ViewHolder holder, final int position) {
             TextView txtEpisodeTitle = holder.view.findViewById(R.id.txtEpisodeTitle);
             txtEpisodeTitle.setText(podcast.getEpisodes().get(position).getTitle());
 
@@ -173,12 +177,12 @@ public class DetailActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     user = FirebaseAuth.getInstance().getCurrentUser();
                     if(user != null) {
-                        DatabaseReference userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+                        userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
                         userData.child("currentPage").setValue(1);
                         Log.d("DetailActivity", uid);
                         userData.child("Queue").child("uid").setValue(uid);
                         userData.child("Queue").child("currentPodcast").setValue(podcast);
-                        userData.child("Queue").child("currentEpisode").setValue(holder.getAdapterPosition());
+                        userData.child("Queue").child("currentEpisode").setValue(position);
                         userData.child("Queue").child("reversed").setValue(false);
                         Intent i = new Intent(DetailActivity.this, MainActivity.class);
                         DetailActivity.this.startActivity(i);
@@ -188,6 +192,54 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
             });
+
+            final ImageButton ibLeftEpisode = holder.view.findViewById(R.id.ibLeftEpisode);
+            final TextView txtCurrentTime = holder.view.findViewById(R.id.txtCurrentTime);
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+                Log.d("DetailActivity", uid);
+                Log.d("DetailActivity", Integer.toString(position));
+                final DatabaseReference episodePlayed = userData.child("Played").child(uid).child(Integer.toString(position));
+                episodePlayed.addValueEventListener(new ValueEventListener() {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final Integer playedStatus = dataSnapshot.child("playedStatus").getValue(Integer.class);
+                        if(playedStatus == null) {
+                            ibLeftEpisode.setImageResource(R.drawable.ic_diamond_hollow_24dp);
+                            txtCurrentTime.setText(R.string.zero_time);
+                        }
+                        else if(playedStatus == 1) {
+                            ibLeftEpisode.setImageResource(R.drawable.ic_diamond_partial_24dp);
+                            Integer currentTime = dataSnapshot.child("currentTime").getValue(Integer.class);
+                            if(currentTime != null) {
+                                long minutes = TimeUnit.SECONDS.toMinutes(currentTime);
+                                txtCurrentTime.setText(String.format(Locale.getDefault(), "%d:%02d",
+                                        minutes, currentTime -
+                                                TimeUnit.MINUTES.toSeconds(minutes)
+                                ));
+                            }
+                        }
+                        else {
+                            ibLeftEpisode.setImageResource(R.drawable.ic_diamond_filled_24dp);
+                            txtCurrentTime.setText(podcast.getEpisodes().get(position).getDurationText());
+                        }
+                        ibLeftEpisode.setOnClickListener(new View.OnClickListener(){
+                            public void onClick(View v){
+                                if(playedStatus == null || playedStatus == 1) {
+                                    episodePlayed.child("playedStatus").setValue(2);
+                                }
+                                else {
+                                    episodePlayed.removeValue();
+                                }
+                            }
+                        });
+                    }
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+            }
+
+            ImageButton ibRightEpisode = holder.view.findViewById(R.id.ibRightEpisode);
+            ibRightEpisode.setVisibility(View.INVISIBLE);
 
             /*TODO: Do something with left and right episode buttons*/
         }
