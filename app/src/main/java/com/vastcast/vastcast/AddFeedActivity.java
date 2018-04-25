@@ -53,14 +53,18 @@ public class AddFeedActivity extends AppCompatActivity {
                 myData.orderByChild("source").equalTo(txtUrl.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Collection c = null;
+                        String uid = null;
                         for(DataSnapshot data : dataSnapshot.getChildren()) {
                             c = data.getValue(Collection.class);
+                            uid = data.getKey();
+                            Log.d("AddFeedActivity", uid);
                         }
                         if(c == null) {
                             new RetrieveFeedTask().execute(txtUrl.getText().toString());
                         }
                         else {
                             Intent i = new Intent(AddFeedActivity.this, DetailActivity.class);
+                            i.putExtra("uid", uid);
                             i.putExtra("podcast", c);
                             AddFeedActivity.this.startActivity(i);
                         }
