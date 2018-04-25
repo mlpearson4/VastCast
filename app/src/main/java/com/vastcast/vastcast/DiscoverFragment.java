@@ -1,6 +1,5 @@
 package com.vastcast.vastcast;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,6 +30,7 @@ public class DiscoverFragment extends Fragment {
 
     DiscoverFragment.MyRecyclerViewAdapter adapter;
     private View view;
+    private ArrayList<String> uidKeys;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_discover, container, false);
@@ -50,17 +50,20 @@ public class DiscoverFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Collect all podcasts from database into an ArrayList
-                ArrayList<Collection> podcasts = new ArrayList<Collection>();
+                ArrayList<Collection> podcasts = new ArrayList<>();
+                uidKeys = new ArrayList<>();
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     Collection thisPodcast = ds.getValue(Collection.class);
+                    String thisKeys = ds.getKey();
                     podcasts.add(thisPodcast);
+                    uidKeys.add(thisKeys);
                 }
 
                 // RecyclerView setup with GridLayoutManager
-                RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.rvDiscover);
+                RecyclerView recyclerView = view.findViewById(R.id.rvDiscover);
                 int numberOfColumns = 2;
                 recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
-                adapter = new DiscoverFragment.MyRecyclerViewAdapter(getActivity(), podcasts);
+                adapter = new DiscoverFragment.MyRecyclerViewAdapter(podcasts);
                 recyclerView.setAdapter(adapter);
             }
 
@@ -74,24 +77,23 @@ public class DiscoverFragment extends Fragment {
 
     class MyRecyclerViewAdapter extends RecyclerView.Adapter<DiscoverFragment.MyRecyclerViewAdapter.ViewHolder> {
 
-        private ArrayList<Collection> podcasts = new ArrayList<Collection>();
+        private ArrayList<Collection> podcasts;
 
         // Data is passed into the constructor
-        public MyRecyclerViewAdapter(Context context, ArrayList<Collection> data) {
+        MyRecyclerViewAdapter(ArrayList<Collection> data) {
             this.podcasts = data;
         }
 
         // Inflates the cell layout from xml when needed
         @Override
-        public DiscoverFragment.MyRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public @NonNull DiscoverFragment.MyRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_podcast, parent, false);
-            DiscoverFragment.MyRecyclerViewAdapter.ViewHolder viewHolder = new DiscoverFragment.MyRecyclerViewAdapter.ViewHolder(view);
-            return viewHolder;
+            return new DiscoverFragment.MyRecyclerViewAdapter.ViewHolder(view);
         }
 
         // Binds the titles and images to the view in each cell
         @Override
-        public void onBindViewHolder(DiscoverFragment.MyRecyclerViewAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull DiscoverFragment.MyRecyclerViewAdapter.ViewHolder holder, int position) {
             // Get and set the title
             String title = podcasts.get(position).getTitle();
             holder.txtTitle.setText(title);
@@ -109,29 +111,26 @@ public class DiscoverFragment extends Fragment {
 
         // Stores and recycles views as they are scrolled off screen
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            public TextView txtTitle;
+            TextView txtTitle;
             public ImageView imgPodcast;
 
             // Find and set the text and image views
-            public ViewHolder(View itemView) {
+            ViewHolder(View itemView) {
                 super(itemView);
-                txtTitle = (TextView) itemView.findViewById(R.id.info_text);
-                imgPodcast = (ImageView) itemView.findViewById(R.id.imgPodcast);
+                txtTitle = itemView.findViewById(R.id.info_text);
+                imgPodcast = itemView.findViewById(R.id.imgPodcast);
                 itemView.setOnClickListener(this);
             }
 
             @Override
             public void onClick(View view) {
-                onItemClick(view, getAdapterPosition());
+                int position = getAdapterPosition();
+                Collection podcast = podcasts.get(position);
+                Intent i = new Intent(DiscoverFragment.this.getActivity(), DetailActivity.class);
+                i.putExtra("uid", uidKeys.get(position));
+                i.putExtra("podcast", podcast);
+                DiscoverFragment.this.startActivity(i);
             }
-        }
-
-        // When a podcast is clicked, launch DetailActivity
-        public void onItemClick(View view, int position) {
-            Collection podcast = podcasts.get(position);
-            Intent i = new Intent(DiscoverFragment.this.getActivity(), DetailActivity.class);
-            i.putExtra("podcast", podcast);
-            DiscoverFragment.this.startActivity(i);
         }
 
     }

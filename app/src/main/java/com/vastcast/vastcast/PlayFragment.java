@@ -278,23 +278,30 @@ public class PlayFragment extends Fragment {
 
                                 }
                             });
-                            /*TODO: Do something with left and right podcast buttons*/
+
                             //sends podcastUID to this played
-                            ImageButton lPod = view.findViewById(R.id.ibLeftPodcast);
-                            lPod.setOnClickListener(new View.OnClickListener(){
+                            final ImageButton ibLeftPodcast = view.findViewById(R.id.ibLeftPodcast);
+                            ibLeftPodcast.setOnClickListener(new View.OnClickListener(){
                                 public void onClick(View v){
                                     myRef=FirebaseDatabase.getInstance().getReference();
                                     user= FirebaseAuth.getInstance().getCurrentUser();
-                                    userID=user.getUid();
-                                    myUser=myRef.child("Users");
-                                    //make sure the podcastKey is added here which is the UID of the collections
-                                    myUser.child(userID).child("Played").child(podcastUID).child("episodeNum").setValue(queue.get(currentEpisode));
-                                    myUser.child(userID).child("Played").child(podcastUID).child("currentTime").setValue(txtCurrentTime);
-                                    if(myUser.child(userID).child("Played").child(podcastUID).child("playedStat")==null) {
-                                        myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(2);
-                                    }
-                                    else{
-                                        myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(0);
+                                    if(user != null) {
+                                        userID=user.getUid();
+                                        myUser=myRef.child("Users").child(userID).child("Played").child(podcastUID).child(Integer.toString(currentEpisode));
+                                        myUser.orderByChild("playedStatus").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                Integer c = dataSnapshot.child("playedStatus").getValue(Integer.class);
+                                                if(c==null || c == 1) {
+                                                    myUser.child("playedStatus").setValue(2);
+                                                    ibLeftPodcast.setImageResource(R.drawable.ic_diamond_filled_24dp);
+                                                }
+                                                else {
+                                                    myUser.removeValue();
+                                                    ibLeftPodcast.setImageResource(R.drawable.ic_diamond_hollow_24dp);
+                                                }
+                                            }
+                                            public void onCancelled(DatabaseError databaseError) {}
+                                        });
                                     }
                                 }
                             });

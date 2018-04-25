@@ -37,6 +37,8 @@ public class DetailActivity extends AppCompatActivity {
     private String uid;
     private FirebaseUser user;
     private DatabaseReference userData;
+    private boolean isAdded;
+    private String key;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +53,7 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         uid = i.getStringExtra("uid");
-        Collection podcast = (Collection) i.getSerializableExtra("podcast");
+        final Collection podcast = (Collection) i.getSerializableExtra("podcast");
         ImageView imgPodcast = findViewById(R.id.imgPodcast);
         new LoadImageTask(imgPodcast).execute(podcast.makeImage());
 
@@ -63,33 +65,45 @@ public class DetailActivity extends AppCompatActivity {
 
         final Button btnAddRemove = findViewById(R.id.btnAddRemove);
         btnAddRemove.setEnabled(false);
+        /*TODO: Make Add/Remove affect library in database*/
+
+        final RecyclerView episodeList = findViewById(R.id.rvEpisodeList);
+        episodeList.setHasFixedSize(true);
+        episodeList.setLayoutManager(new LinearLayoutManager(this));
+
         user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null) {
             userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
             userData.child("Library").orderByValue().equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                 public void onDataChange(final DataSnapshot dataSnapshot) {
+                    isAdded = false;
+                    for(DataSnapshot item : dataSnapshot.getChildren()) {
+                        isAdded = true;
+                        key = item.getKey();
+                    }
+                    if(isAdded) btnAddRemove.setText(R.string.remove);
                     btnAddRemove.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(dataSnapshot != null) {
-                                dataSnapshot.getRef().removeValue();
+                            if(isAdded) {
+                                dataSnapshot.getRef().child(key).removeValue();
+                                isAdded = false;
+                                btnAddRemove.setText(R.string.add);
                             }
                             else {
-                                userData.child("Library").push().setValue(uid);
+                                key = userData.child("Library").push().getKey();
+                                userData.child("Library").child(key).setValue(uid);
+                                isAdded =true;
+                                btnAddRemove.setText(R.string.remove);
                             }
                         }
                     });
                     btnAddRemove.setEnabled(true);
+                    episodeList.setAdapter(new PodcastAdapter(podcast));
                 }
                 public void onCancelled(DatabaseError databaseError) {}
             });
         }
-        /*TODO: Make Add/Remove affect library in database*/
-
-        RecyclerView episodeList = findViewById(R.id.rvEpisodeList);
-        episodeList.setHasFixedSize(true);
-        episodeList.setLayoutManager(new LinearLayoutManager(this));
-        episodeList.setAdapter(new PodcastAdapter(podcast));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -161,6 +175,7 @@ public class DetailActivity extends AppCompatActivity {
                     if(user != null) {
                         DatabaseReference userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
                         userData.child("currentPage").setValue(1);
+                        Log.d("DetailActivity", uid);
                         userData.child("Queue").child("uid").setValue(uid);
                         userData.child("Queue").child("currentPodcast").setValue(podcast);
                         userData.child("Queue").child("currentEpisode").setValue(holder.getAdapterPosition());

@@ -26,6 +26,7 @@
     <string name="enter">Enter</string>
 
     <string name="add">add</string>
+    <string name="remove">remove</string>
 
     <string name="left_episode_button">Left Episode Button</string>
     <string name="right_episode_button">Right Episode Button</string>
