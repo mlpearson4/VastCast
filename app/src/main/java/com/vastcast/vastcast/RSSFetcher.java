@@ -32,7 +32,6 @@ public class RSSFetcher {
             parser.nextTag();
             Collection c = readRSS(parser, source);
             in.close();
-            DatabaseWrapper.addCollection(c);
             return c;
     }
 

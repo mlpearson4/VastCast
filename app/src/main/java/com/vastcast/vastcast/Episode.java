@@ -17,7 +17,6 @@ public class Episode implements Serializable {
         this.description = description;
         this.duration = duration;
         this.link = link;
-        /*TODO: Add Date Using pubdate Tag*/
     }
 
     public String getTitle() {
