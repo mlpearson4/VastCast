@@ -1,6 +1,7 @@
 package com.vastcast.vastcast;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -59,6 +60,11 @@ public class PlayFragment extends Fragment {
     private Boolean reversed;
     private ArrayList<Episode> queue;
     private FirebaseUser user;
+    private static DatabaseReference myRef;
+    private static DatabaseReference myUser;
+    private static FirebaseUser user;
+    private static String userID;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_play, container, false);
@@ -129,6 +135,25 @@ public class PlayFragment extends Fragment {
         });
 
         /*TODO: Do something with left and right podcast buttons*/
+        //sends podcastUID to this played
+        ImageButton lPod = view.findViewById(R.id.ibLeftPodcast);
+        lPod.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                myRef=FirebaseDatabase.getInstance().getReference();
+                user= FirebaseAuth.getInstance().getCurrentUser();
+                userID=user.getUid();
+                myUser=myRef.child("Users");
+                //make sure the podcastKey is added here which is the UID of the collections
+                myUser.child(userID).child("Played").child(podcastKey).child("episodeNum").setValue(queue.get(currentEpisode));
+                myUser.child(userID).child("Played").child(podcastKey).child("currentTime").setValue(txtCurrentTime);
+                if(myUser.child(userID).child("Played").child(podcastKey).child("playedStat")==0 || myUser.child(userID).child("Played").child().child("playedStat")==1) {
+                    myUser.child(userID).child("Played").child(podcastKey).child("playedStat").setValue(2);
+                }
+                else{
+                    myUser.child(userID).child("Played").child(podcastKey).child("playedStat").setValue(0);
+                }
+            }
+        });
 
         return view;
     }
