@@ -21,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -143,6 +145,36 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
             });
+
+            // This is a menu for the ibRightEpisode - discontinued, but here if we decide to add it back in
+            /*ImageButton ibRightEpisode = holder.view.findViewById(R.id.ibRightEpisode);
+            ibRightEpisode.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+
+                    //creating a popup menu
+                    PopupMenu popup = new PopupMenu(getBaseContext(), view);
+                    //inflating menu from xml resource
+                    popup.inflate(R.menu.menu_detail);
+                    //adding click listener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.menuOne:
+                                    Log.d("DetailActivity", "Menu 1 has been clicked");
+                                    //handle menu1 click
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
+                    //displaying the popup
+                    popup.show();
+
+                }
+            });
+            */
 
             /*TODO: Do something with left and right episode buttons*/
         }
