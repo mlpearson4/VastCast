@@ -1,6 +1,7 @@
 package com.vastcast.vastcast;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -16,11 +17,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -237,6 +240,36 @@ public class PlayFragment extends Fragment {
                                             userData.child("Queue").child("currentEpisode").setValue(currentEpisode);
                                         }
                                     }
+                                }
+                            });
+
+                            ImageButton ibRightPodcast = view.findViewById(R.id.ibRightPodcast);
+                            ibRightPodcast.setOnClickListener(new View.OnClickListener(){
+                                @Override
+                                public void onClick(View view) {
+
+                                    //creating a popup menu
+                                    PopupMenu popup = new PopupMenu(getContext(), view);
+                                    //inflating menu from xml resource
+                                    popup.inflate(R.menu.menu_detail);
+                                    //adding click listener
+                                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                        @Override
+                                        public boolean onMenuItemClick(MenuItem item) {
+                                            switch (item.getItemId()) {
+                                                case R.id.menuOne:
+                                                    Log.d("PlayFragment", "Menu 1 has been clicked");
+                                                    Intent i = new Intent(PlayFragment.this.getActivity(), DetailActivity.class);
+                                                    i.putExtra("podcast", currentPodcast);
+                                                    PlayFragment.this.startActivity(i);
+                                                    break;
+                                            }
+                                            return false;
+                                        }
+                                    });
+                                    //displaying the popup
+                                    popup.show();
+
                                 }
                             });
                         }
