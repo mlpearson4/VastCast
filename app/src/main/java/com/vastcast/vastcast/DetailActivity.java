@@ -221,7 +221,7 @@ public class DetailActivity extends AppCompatActivity {
                         }
                         else {
                             ibLeftEpisode.setImageResource(R.drawable.ic_diamond_filled_24dp);
-                            txtCurrentTime.setText(podcast.getEpisodes().get(position).getDurationText());
+                            txtCurrentTime.setText(podcast.getEpisodes().get(position).makeDurationText());
                         }
                         ibLeftEpisode.setOnClickListener(new View.OnClickListener(){
                             public void onClick(View v){
