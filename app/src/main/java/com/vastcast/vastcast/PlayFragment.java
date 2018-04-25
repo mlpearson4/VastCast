@@ -65,7 +65,6 @@ public class PlayFragment extends Fragment {
     private FirebaseUser user;
     private static DatabaseReference myRef;
     private static DatabaseReference myUser;
-    private static FirebaseUser user;
     private static String userID;
 
 
@@ -137,27 +136,6 @@ public class PlayFragment extends Fragment {
             }
         });
 
-        /*TODO: Do something with left and right podcast buttons*/
-        //sends podcastUID to this played
-        ImageButton lPod = view.findViewById(R.id.ibLeftPodcast);
-        lPod.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                myRef=FirebaseDatabase.getInstance().getReference();
-                user= FirebaseAuth.getInstance().getCurrentUser();
-                userID=user.getUid();
-                myUser=myRef.child("Users");
-                //make sure the podcastKey is added here which is the UID of the collections
-                myUser.child(userID).child("Played").child(podcastUID).child("episodeNum").setValue(queue.get(currentEpisode));
-                myUser.child(userID).child("Played").child(podcastUID).child("currentTime").setValue(txtCurrentTime);
-                if(myUser.child(userID).child("Played").child(podcastUID).child("playedStat")==0 || myUser.child(userID).child("Played").child().child("playedStat")==1) {
-                    myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(2);
-                }
-                else{
-                    myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(0);
-                }
-            }
-        });
-
         return view;
     }
 
@@ -172,6 +150,10 @@ public class PlayFragment extends Fragment {
                     if(dataSnapshot.getValue() != null) {
                         for (DataSnapshot item : dataSnapshot.getChildren()) {
                             switch(item.getKey()) {
+                                case "uid":{
+                                    podcastUID = item.getValue(String.class);
+                                    break;
+                                }
                                 case "currentEpisode": {
                                     currentEpisode = item.getValue(Integer.class);
                                     break;
@@ -189,7 +171,7 @@ public class PlayFragment extends Fragment {
                                 }
                             }
                         }
-                        if(currentEpisode != null && currentPodcast != null && reversed != null) {
+                        if(podcastUID!=null && currentEpisode != null && currentPodcast != null && reversed != null) {
                             if(reversed) {
                                 currentEpisode = queue.size() - currentEpisode - 1;
                                 Collections.reverse(queue);
@@ -294,6 +276,26 @@ public class PlayFragment extends Fragment {
                                     //displaying the popup
                                     popup.show();
 
+                                }
+                            });
+                            /*TODO: Do something with left and right podcast buttons*/
+                            //sends podcastUID to this played
+                            ImageButton lPod = view.findViewById(R.id.ibLeftPodcast);
+                            lPod.setOnClickListener(new View.OnClickListener(){
+                                public void onClick(View v){
+                                    myRef=FirebaseDatabase.getInstance().getReference();
+                                    user= FirebaseAuth.getInstance().getCurrentUser();
+                                    userID=user.getUid();
+                                    myUser=myRef.child("Users");
+                                    //make sure the podcastKey is added here which is the UID of the collections
+                                    myUser.child(userID).child("Played").child(podcastUID).child("episodeNum").setValue(queue.get(currentEpisode));
+                                    myUser.child(userID).child("Played").child(podcastUID).child("currentTime").setValue(txtCurrentTime);
+                                    if(myUser.child(userID).child("Played").child(podcastUID).child("playedStat")==null) {
+                                        myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(2);
+                                    }
+                                    else{
+                                        myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(0);
+                                    }
                                 }
                             });
                         }
