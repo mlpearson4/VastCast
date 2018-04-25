@@ -68,7 +68,6 @@ public class DetailActivity extends AppCompatActivity {
 
         final Button btnAddRemove = findViewById(R.id.btnAddRemove);
         btnAddRemove.setEnabled(false);
-        /*TODO: Make Add/Remove affect library in database*/
 
         final RecyclerView episodeList = findViewById(R.id.rvEpisodeList);
         episodeList.setHasFixedSize(true);
@@ -92,7 +91,7 @@ public class DetailActivity extends AppCompatActivity {
                             if(isAdded) {
                                 dataSnapshot.getRef().child(key).removeValue();
                                 isAdded = false;
-                                btnAddRemove.setText(R.string.add);
+                                btnAddRemove.setText(R.string.save);
                             }
                             else {
                                 key = userData.child("Library").push().getKey();
@@ -238,8 +237,6 @@ public class DetailActivity extends AppCompatActivity {
 
             ImageButton ibRightEpisode = holder.view.findViewById(R.id.ibRightEpisode);
             ibRightEpisode.setVisibility(View.INVISIBLE);
-
-            /*TODO: Do something with left and right episode buttons*/
         }
 
         public int getItemCount() {

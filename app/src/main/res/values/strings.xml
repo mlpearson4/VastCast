@@ -25,7 +25,7 @@
     <string name="podcast_url">Podcast URL</string>
     <string name="enter">Enter</string>
 
-    <string name="add">add</string>
+    <string name="save">save</string>
     <string name="remove">remove</string>
 
     <string name="left_episode_button">Left Episode Button</string>

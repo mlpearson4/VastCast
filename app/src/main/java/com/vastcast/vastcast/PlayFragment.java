@@ -310,10 +310,10 @@ public class PlayFragment extends Fragment {
                                             public void onClick(View v) {
                                                 if (playedStatus == null || playedStatus == 1) {
                                                     episodePlayed.child("playedStatus").setValue(2);
-                                                    /*Todo: Skip to next episode, if last episode seekto end*/
+                                                    /*TODO: Skip to next episode, if last episode seekto end*/
                                                 } else {
                                                     episodePlayed.removeValue();
-                                                    /*Todo: Seek episode to zero and pause playback*/
+                                                    /*TODO: Seek episode to zero and pause playback*/
                                                 }
                                             }
                                         });
@@ -491,7 +491,7 @@ public class PlayFragment extends Fragment {
 
             holder.view.setOnClickListener( new View.OnClickListener() {
                 public void onClick(View view) {
-                    /*TODO: Set current episode to the clicked episode and adjust the queue list*/
+                    /*TODO: Ensure media player handles episode switch properly*/
                     currentEpisode = holder.getAdapterPosition() + currentEpisode + 1;
                     initialStage = true; //some other stuff necessary probably
                     Episode episode = queue.get(currentEpisode);

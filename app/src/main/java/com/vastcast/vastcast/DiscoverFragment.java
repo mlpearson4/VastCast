@@ -70,7 +70,7 @@ public class DiscoverFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         };
-        valuesRef.addListenerForSingleValueEvent(eventListener);
+        valuesRef.addValueEventListener(eventListener);
 
         return view;
     }
