@@ -32,35 +32,65 @@ public class ManageFragment extends Fragment {
     MyRecyclerViewAdapter adapter;
     private View view;
     private ArrayList<String> uidKeys;
+    private ArrayList<Collection> podcasts;
+    private RecyclerView recyclerView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_manage, container, false);
 
+        // RecyclerView setup with GridLayoutManager
+        recyclerView = view.findViewById(R.id.rvManage);
+        int numberOfColumns = 2;
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
+
         // Get DatabaseReference for all podcasts in database
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+
         if(user != null) {
             String userID=user.getUid();
-            DatabaseReference valuesRef = rootRef.child("User").child(userID).child("Library");
+            DatabaseReference valuesRef = rootRef.child("Users").child(userID).child("Library");
+            final DatabaseReference dataRef= rootRef.child("Database");
             ValueEventListener eventListener = new ValueEventListener() {
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // Collect all podcasts from database into an ArrayList
-                    ArrayList<Collection> podcasts = new ArrayList<>();
                     uidKeys = new ArrayList<>();
+                    
                     for(DataSnapshot ds : dataSnapshot.getChildren()){
-                        Collection thisPodcast = ds.getValue(Collection.class);
-                        String thisKeys = ds.getKey();
-                        podcasts.add(thisPodcast);
+                       // Collection thisPodcast = ds.getValue(Collection.class);
+
+                        String thisKeys = ds.getValue(String.class);
+
+                        //podcasts.add(thisPodcast);
                         uidKeys.add(thisKeys);
+
                     }
-                    // RecyclerView setup with GridLayoutManager
-                    RecyclerView recyclerView = view.findViewById(R.id.rvManage);
-                    int numberOfColumns = 2;
-                    recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
-                    adapter = new MyRecyclerViewAdapter(podcasts);
-                    recyclerView.setAdapter(adapter);
+
+                    dataRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot data) {
+                            podcasts = new ArrayList<>();
+
+                            for(DataSnapshot ds : data.getChildren()){
+                                for(String uidKey : uidKeys) {
+
+                                    if(ds.getKey().compareTo(uidKey)==0) {
+                                        Collection thisPodcast = ds.getValue(Collection.class);
+
+                                        podcasts.add(thisPodcast);
+                                    }
+                                }
+                            }
+                            adapter = new MyRecyclerViewAdapter(podcasts);
+                            recyclerView.setAdapter(adapter);
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
 
                 @Override
