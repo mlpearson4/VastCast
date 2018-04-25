@@ -57,7 +57,7 @@ public class ManageFragment extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // Collect all podcasts from database into an ArrayList
                     uidKeys = new ArrayList<>();
-                    
+
                     for(DataSnapshot ds : dataSnapshot.getChildren()){
                        // Collection thisPodcast = ds.getValue(Collection.class);
 
