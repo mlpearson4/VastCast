@@ -280,33 +280,29 @@ public class PlayFragment extends Fragment {
                             });
 
                             //sends podcastUID to this played
-                            ImageButton lPod = view.findViewById(R.id.ibLeftPodcast);
-                            lPod.setOnClickListener(new View.OnClickListener(){
+                            final ImageButton ibLeftPodcast = view.findViewById(R.id.ibLeftPodcast);
+                            ibLeftPodcast.setOnClickListener(new View.OnClickListener(){
                                 public void onClick(View v){
                                     myRef=FirebaseDatabase.getInstance().getReference();
                                     user= FirebaseAuth.getInstance().getCurrentUser();
-                                    userID=user.getUid();
-                                    myUser=myRef.child("Users").child(userID).child("Played").child(podcastUID);
-
-                                    myUser.child("episodeNum").setValue(queue.get(currentEpisode));
-                                  //Problem with line below.....
-                                    //  myUser.child("currentTime").setValue(txtCurrentTime);
-
-                                    myUser.orderByChild("playedStat").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    if(user != null) {
+                                        userID=user.getUid();
+                                        myUser=myRef.child("Users").child(userID).child("Played").child(podcastUID).child(Integer.toString(currentEpisode));
+                                        myUser.orderByChild("playedStatus").addListenerForSingleValueEvent(new ValueEventListener() {
                                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                                Integer c = dataSnapshot.child("playedStat").getValue(Integer.class);
-                                                if(c==null){
-                                                    myUser.child("playedStat").setValue(2);
+                                                Integer c = dataSnapshot.child("playedStatus").getValue(Integer.class);
+                                                if(c==null || c == 1) {
+                                                    myUser.child("playedStatus").setValue(2);
+                                                    ibLeftPodcast.setImageResource(R.drawable.ic_diamond_filled_24dp);
                                                 }
-                                                else if(c==0 || c==1){
-                                                        myUser.child("playedStat").setValue(2);
-                                                }
-                                                else{
-                                                        myUser.child("playedStat").setValue(0);
+                                                else {
+                                                    myUser.removeValue();
+                                                    ibLeftPodcast.setImageResource(R.drawable.ic_diamond_hollow_24dp);
                                                 }
                                             }
                                             public void onCancelled(DatabaseError databaseError) {}
-                                    });
+                                        });
+                                    }
                                 }
                             });
                         }
