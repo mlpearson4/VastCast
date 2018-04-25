@@ -167,7 +167,7 @@ public class DetailActivity extends AppCompatActivity {
             txtEpisodeTitle.setText(podcast.getEpisodes().get(position).getTitle());
 
             TextView txtTotalTime = holder.view.findViewById(R.id.txtTotalTime);
-            txtTotalTime.setText(podcast.getEpisodes().get(position).getDurationText());
+            txtTotalTime.setText(podcast.getEpisodes().get(position).makeDurationText());
 
             holder.view.setOnClickListener( new View.OnClickListener() {
                 public void onClick(View view) {
