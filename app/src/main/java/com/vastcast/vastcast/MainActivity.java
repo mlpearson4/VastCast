@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseUser user;
+    private ViewPager vpMain;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,12 +31,17 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(tbMain);
 
         TabLayout tlMain = findViewById(R.id.tlMain);
-        final ViewPager vpMain = findViewById(R.id.vpMain);
+        vpMain = findViewById(R.id.vpMain);
         vpMain.addOnPageChangeListener(new CircularOnPageChangeListener(vpMain));
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tlMain.getContext(), tlMain.getTabCount());
         vpMain.setAdapter(adapter);
         tlMain.setupWithViewPager(vpMain);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("currentPage");
@@ -51,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*TODO: Add Search to Menu*/
+    /*TODO: Get Basic Search Working*/
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);

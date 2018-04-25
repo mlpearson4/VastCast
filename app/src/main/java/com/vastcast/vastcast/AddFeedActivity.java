@@ -109,7 +109,10 @@ public class AddFeedActivity extends AppCompatActivity {
                 //others are IOException and XmlPullParserException
             }
             else {
+                String uid = myData.push().getKey();
+                myData.child(uid).setValue(c);
                 Intent i = new Intent(AddFeedActivity.this, DetailActivity.class);
+                i.putExtra("uid", uid);
                 i.putExtra("podcast", c);
                 AddFeedActivity.this.startActivity(i);
             }
