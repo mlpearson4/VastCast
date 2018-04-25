@@ -57,6 +57,7 @@ public class PlayFragment extends Fragment {
     private QueueAdapter adapter;
     private TextView txtEpisodeTitle;
     private TextView txtTotalTime;
+    private String podcastUID;
     private Collection currentPodcast;
     private Integer currentEpisode;
     private Boolean reversed;
@@ -146,13 +147,13 @@ public class PlayFragment extends Fragment {
                 userID=user.getUid();
                 myUser=myRef.child("Users");
                 //make sure the podcastKey is added here which is the UID of the collections
-                myUser.child(userID).child("Played").child(podcastKey).child("episodeNum").setValue(queue.get(currentEpisode));
-                myUser.child(userID).child("Played").child(podcastKey).child("currentTime").setValue(txtCurrentTime);
-                if(myUser.child(userID).child("Played").child(podcastKey).child("playedStat")==0 || myUser.child(userID).child("Played").child().child("playedStat")==1) {
-                    myUser.child(userID).child("Played").child(podcastKey).child("playedStat").setValue(2);
+                myUser.child(userID).child("Played").child(podcastUID).child("episodeNum").setValue(queue.get(currentEpisode));
+                myUser.child(userID).child("Played").child(podcastUID).child("currentTime").setValue(txtCurrentTime);
+                if(myUser.child(userID).child("Played").child(podcastUID).child("playedStat")==0 || myUser.child(userID).child("Played").child().child("playedStat")==1) {
+                    myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(2);
                 }
                 else{
-                    myUser.child(userID).child("Played").child(podcastKey).child("playedStat").setValue(0);
+                    myUser.child(userID).child("Played").child(podcastUID).child("playedStat").setValue(0);
                 }
             }
         });
@@ -271,7 +272,6 @@ public class PlayFragment extends Fragment {
                             ibRightPodcast.setOnClickListener(new View.OnClickListener(){
                                 @Override
                                 public void onClick(View view) {
-
                                     //creating a popup menu
                                     PopupMenu popup = new PopupMenu(getContext(), view);
                                     //inflating menu from xml resource
