@@ -264,6 +264,7 @@ public class PlayFragment extends Fragment {
                                                 case R.id.menuOne:
                                                     Log.d("PlayFragment", "Menu 1 has been clicked");
                                                     Intent i = new Intent(PlayFragment.this.getActivity(), DetailActivity.class);
+                                                    i.putExtra("uid", podcastUID);
                                                     i.putExtra("podcast", currentPodcast);
                                                     PlayFragment.this.startActivity(i);
                                                     break;
