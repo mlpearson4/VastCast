@@ -127,7 +127,7 @@ public class PlayFragment extends Fragment {
 
         if(user != null) {
             String userID = user.getUid();
-            DatabaseReference valuesRef = rootRef.child("Users").child(userID); //.child("Settings").child("autoplay");
+            DatabaseReference valuesRef = rootRef.child("Users").child(userID);
             ValueEventListener eventListener = new ValueEventListener() {
 
                 @Override
@@ -156,6 +156,20 @@ public class PlayFragment extends Fragment {
                             }
                         }
                     }
+
+                    replay.setOnClickListener(new View.OnClickListener(){
+                        public void onClick(View v){
+                            if (mediaPlayer != null)
+                                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - timeSkip * 1000);
+                        }
+                    });
+
+                    forward.setOnClickListener(new View.OnClickListener(){
+                        public void onClick(View v){
+                            if (mediaPlayer != null)
+                                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + timeSkip * 1000);
+                        }
+                    });
                 }
 
                 @Override
@@ -165,19 +179,7 @@ public class PlayFragment extends Fragment {
             valuesRef.addValueEventListener(eventListener);
         }
 
-        replay.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                if (mediaPlayer != null)
-                    mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - timeSkip * 1000);
-            }
-        });
 
-        forward.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                if (mediaPlayer != null)
-                    mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + timeSkip * 1000);
-            }
-        });
 
         return view;
     }

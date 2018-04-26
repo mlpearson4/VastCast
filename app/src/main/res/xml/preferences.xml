@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
+    <!--SwitchPreference
         android:defaultValue="false"
         android:key="autoplay_preference"
         android:summary="Once an episode is loaded, it will automatically begin playing. Once an episode has finished, the next episode will automatically play."
-        android:title="Autoplay" />
+        android:title="Autoplay" /-->
     <ListPreference
         android:defaultValue="10"
         android:entries="@array/list_preference_skipper"
