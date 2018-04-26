@@ -1,11 +1,14 @@
 package com.vastcast.vastcast;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,12 +19,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseUser user;
     private ViewPager vpMain;
+    private DatabaseReference mUserDatabase;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar tbMain = findViewById(R.id.tbMain);
         setSupportActionBar(tbMain);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         TabLayout tlMain = findViewById(R.id.tlMain);
         vpMain = findViewById(R.id.vpMain);
@@ -57,11 +63,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*TODO: Get Basic Search Working*/
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
         inflater.inflate(R.menu.menu_settings, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
         return true;
     }
 
@@ -71,11 +82,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
-            /*case R.id.actionSearch;
-                Intent intent = new Intent(this, SearchActivity.class);
-                startActivity(intent);
-                return true;
-             */
             default:
                 return super.onOptionsItemSelected(item);
         }
