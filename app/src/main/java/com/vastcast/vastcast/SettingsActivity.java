@@ -27,23 +27,15 @@ public class SettingsActivity extends PreferenceActivity {
         OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sp, String key) {
                 user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d("SettingsActivity", key);
                 Boolean test = (key.equals("autoplay_preference"));
-                Log.d("SettingsActivity", test.toString());
                 if(key.equals("autoplay_preference")) {
                     Boolean preference_autoplay = sp.getBoolean("autoplay_preference", false);
-                    Log.d("SettingsActivity", "in autoplay_preference");
                     if(user != null) {
                         userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
                         userData.child("Settings").child("autoplay").setValue(preference_autoplay);
-                        Log.d("SettingsActivity", preference_autoplay.toString());
                     }
                 }
                 else if(key.equals("skipper_preference")) {
-                    String preference_skipper = sp.getString("skipper_preference", "30");
-                    Log.d("SettingsActivity", preference_skipper);
-                }
-                /*else if(key.equals("skipper_preference")) {
                     String preference_skipper = sp.getString("skipper_preference", "30");
 
                     final int timeSkip;
@@ -66,7 +58,7 @@ public class SettingsActivity extends PreferenceActivity {
                         userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
                         userData.child("Settings").child("timeSkip").setValue(timeSkip);
                     }
-                }*/
+                }
             }
         };
 
