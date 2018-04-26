@@ -1,5 +1,6 @@
 package com.vastcast.vastcast;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import 	android.preference.PreferenceManager;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import android.preference.Preference;
 
 public class SettingsActivity extends PreferenceActivity {
 
@@ -23,6 +25,21 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Preference pref = findPreference("btnLogout");
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                // TODO Auto-generated method stub
+                FirebaseAuth.getInstance().signOut();
+                Log.d("SettingsActivity", "Logout button pressed");
+                Intent i = new Intent(SettingsActivity.this, LoginActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                SettingsActivity.this.startActivity(i);
+                return false;
+            }
+        });
 
         OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sp, String key) {

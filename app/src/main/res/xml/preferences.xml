@@ -14,4 +14,8 @@
         android:summary="%s"
         android:title="Skip amount" />
 
+    <Preference
+        android:key="btnLogout"
+        android:title="Logout"></Preference>
+
 </PreferenceScreen>
