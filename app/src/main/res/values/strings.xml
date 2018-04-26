@@ -8,6 +8,7 @@
     <string name="play">Play</string>
     <string name="manage">Manage</string>
     <string name="search">Search</string>
+    <string name="search_hint">Search by Podcast Title</string>
 
     <string name="podcast_image">Podcast Image</string>
     <string name="left_podcast_button">Left Podcast Button</string>
