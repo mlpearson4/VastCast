@@ -15,3 +15,6 @@ The application will be built for Android. The application should provide a user
 ## Android Benefits
 
 VastCast focuses on the strengths of each Android and IOS podcast apps on the market to create a desirable product for Android users. VastCast is also aware of some of the less desirable features and mistakes done by prior podcast apps on the market to avoid replicating again.
+
+## Video
+[VastCast Video](https://youtu.be/z5pGnDHEjq8 "VastCast Video")
