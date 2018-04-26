@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+
 public class PlayFragment extends Fragment {
     private Boolean playing = false;
     private Boolean initialStage = true;
@@ -64,6 +65,7 @@ public class PlayFragment extends Fragment {
     private ArrayList<Episode> queue;
     private FirebaseUser user;
     private static DatabaseReference userData;
+    private int timeSkip = 10;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -116,9 +118,53 @@ public class PlayFragment extends Fragment {
             }
         });
 
+        final ImageButton replay = view.findViewById(R.id.ibReplay);
+        final ImageButton forward = view.findViewById(R.id.ibSkip);
+
         /*TODO: Use settings to get this value*/
-        final int timeSkip = 10;
-        ImageButton replay = view.findViewById(R.id.ibReplay);
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user != null) {
+            String userID = user.getUid();
+            DatabaseReference valuesRef = rootRef.child("Users").child(userID); //.child("Settings").child("autoplay");
+            ValueEventListener eventListener = new ValueEventListener() {
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.hasChild("Settings"))
+                    {
+                        DataSnapshot settings = dataSnapshot.child("Settings");
+                        if(settings.hasChild("timeSkip"))
+                        {
+                            DataSnapshot timeSkipSnapshot = settings.child("timeSkip");
+                            timeSkip = timeSkipSnapshot.getValue(Integer.class);
+                            Log.d("PlayFragment", Integer.toString(timeSkip));
+                            switch(timeSkip){
+                                case 5:
+                                    replay.setImageResource(R.drawable.ic_replay_5_24dp);
+                                    forward.setImageResource(R.drawable.ic_forward_5_24dp);
+                                    break;
+                                case 10:
+                                    replay.setImageResource(R.drawable.ic_replay_10_24dp);
+                                    forward.setImageResource(R.drawable.ic_forward_10_24dp);
+                                    break;
+                                case 30:
+                                    replay.setImageResource(R.drawable.ic_replay_30_24dp);
+                                    forward.setImageResource(R.drawable.ic_forward_30_24dp);
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+
+            };
+            valuesRef.addValueEventListener(eventListener);
+        }
+
         replay.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 if (mediaPlayer != null)
@@ -126,7 +172,6 @@ public class PlayFragment extends Fragment {
             }
         });
 
-        ImageButton forward = view.findViewById(R.id.ibSkip);
         forward.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 if (mediaPlayer != null)
