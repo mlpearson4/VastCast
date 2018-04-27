@@ -24,4 +24,4 @@ To play a podcast, a user simply needs to click the play button. Once clicked, t
 
 VastCast also offers a search menu where users can search for a podcast title using either whole words or portions of words. Search is not case-sensitive.
 
-[![VastCast Video](pictures/vid_screen)](https://www.youtube.com/watch?v=z5pGnDHEjq8 "VastCast Video")
+[![VastCast Video](pictures/vid_screen.jpg)](https://www.youtube.com/watch?v=z5pGnDHEjq8 "VastCast Video")
