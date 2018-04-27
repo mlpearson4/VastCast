@@ -22,7 +22,7 @@ I have a wide range of interests including Philosophy, Buzz Lightyear, Guitar, F
 ## Michelle
 
 ![Michelle](http://bit.ly/2Hjdx0n)  
-I like nature and coding. Also red pandas. And queso.
+I like nature and Texas. Also red pandas. And queso.
 
 ## Erika
 
