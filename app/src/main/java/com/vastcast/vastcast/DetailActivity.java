@@ -145,6 +145,7 @@ public class DetailActivity extends AppCompatActivity {
 
         protected void onPostExecute(Bitmap bitmap) {
             if(e != null) {
+                Log.d("LoadImageTask", "Image loaded");
                 Log.e("DetailActivity", Log.getStackTraceString(e));
             }
             else {

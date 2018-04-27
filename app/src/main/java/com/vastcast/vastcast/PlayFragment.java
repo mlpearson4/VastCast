@@ -1,7 +1,10 @@
 package com.vastcast.vastcast;
 
 import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -9,6 +12,7 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MotionEventCompat;
@@ -26,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 public class PlayFragment extends Fragment {
     private Boolean playing = false;
     private Boolean initialStage = true;
-    private MediaPlayer mediaPlayer;
+    //private MediaPlayer mediaPlayer;*/
     private SeekBar seekBar;
     private ImageButton audio;
     private Runnable runnable;
@@ -66,24 +71,25 @@ public class PlayFragment extends Fragment {
     private FirebaseUser user;
     private static DatabaseReference userData;
     private int timeSkip = 10;
+    PlayService mService;
+    boolean mBound = false;
+    boolean unbound = true;
+    boolean resetTimer;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("Play Create", "jsut created");
         view = inflater.inflate(R.layout.fragment_play, container, false);
 
         handler = new Handler();
 
-
-
         seekBar = view.findViewById(R.id.seekbarEpisode);
 
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean input) {
                 if (input){
-                    mediaPlayer.seekTo(progress);
+                    mService.seekToAudio(progress);
                 }
             }
             public void onStartTrackingTouch(SeekBar seekBar) {}
@@ -91,27 +97,32 @@ public class PlayFragment extends Fragment {
         });
 
         audio = view.findViewById(R.id.ibPlayPause);
+        audio.setImageResource(R.drawable.ic_play_arrow_24dp);
         audio.setEnabled(false);
         Log.d("Play", "source: " + source);
         audio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!playing){
+                    /*if (mService.getSource().equals(source.toString())){
+                        mService.resetAudio(source.toString());
+                        playing = true;
+                        initialStage = false;
+                    }*/
                     if (initialStage){
+                        mService.resetAudio();
                         new Player().execute(source);
+                        //mService.startAudio();
+                        audio.setImageResource(R.drawable.ic_pause_24dp);
                     }
-                    else{
-                        if (!mediaPlayer.isPlaying()) {
-                            mediaPlayer.start();
-                        }
+                    else {
+                        mService.startAudio();
+                        audio.setImageResource(R.drawable.ic_pause_24dp);
                     }
-                    audio.setImageResource(R.drawable.ic_pause_24dp);
                     playing = true;
                 }
                 else{
-                    if (mediaPlayer.isPlaying()){
-                        mediaPlayer.pause();
-                    }
+                    mService.pauseAudio();
                     audio.setImageResource(R.drawable.ic_play_arrow_24dp);
                     playing = false;
                 }
@@ -135,6 +146,7 @@ public class PlayFragment extends Fragment {
                     if(dataSnapshot.hasChild("Settings"))
                     {
                         DataSnapshot settings = dataSnapshot.child("Settings");
+
                         if(settings.hasChild("timeSkip"))
                         {
                             DataSnapshot timeSkipSnapshot = settings.child("timeSkip");
@@ -155,19 +167,22 @@ public class PlayFragment extends Fragment {
                                     break;
                             }
                         }
+                        audio.setImageResource(R.drawable.ic_pause_24dp);
                     }
 
                     replay.setOnClickListener(new View.OnClickListener(){
-                        public void onClick(View v){
-                            if (mediaPlayer != null)
-                                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - timeSkip * 1000);
+                        public void onClick(View v) {
+                            if (mService.isNull() != null) {
+                                mService.seekToAudio(mService.getCurrentAudio() - (timeSkip * 1000));
+                            }
                         }
                     });
 
                     forward.setOnClickListener(new View.OnClickListener(){
                         public void onClick(View v){
-                            if (mediaPlayer != null)
-                                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + timeSkip * 1000);
+                            if(mService.isNull() != null) {
+                                mService.seekToAudio(mService.getCurrentAudio() + (timeSkip * 1000));
+                            }
                         }
                     });
                 }
@@ -179,28 +194,31 @@ public class PlayFragment extends Fragment {
             valuesRef.addValueEventListener(eventListener);
         }
 
-
-
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        Log.d("OnStart", "HEEELLPP");
         user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).child("Queue");
             ref.addValueEventListener(new ValueEventListener() {
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
                     if(dataSnapshot.getValue() != null) {
                         for (DataSnapshot item : dataSnapshot.getChildren()) {
                             switch(item.getKey()) {
                                 case "uid":{
                                     podcastUID = item.getValue(String.class);
+                                    Log.d("New podcastUID", podcastUID);
                                     break;
                                 }
                                 case "currentEpisode": {
                                     currentEpisode = item.getValue(Integer.class);
+                                    Log.d("New current episode", Integer.toString(currentEpisode));
                                     break;
                                 }
                                 case "currentPodcast": {
@@ -230,6 +248,7 @@ public class PlayFragment extends Fragment {
                             txtTotalTime = view.findViewById(R.id.txtTotalTime);
                             txtTotalTime.setText(currentPodcast.getEpisodes().get(currentEpisode).makeDurationText());
                             source = currentPodcast.getEpisodes().get(currentEpisode).makeLink();
+                            Log.d("New source", source.toString());
                             audio.setEnabled(true);
 
                             URL image = currentPodcast.makeImage();
@@ -251,6 +270,10 @@ public class PlayFragment extends Fragment {
                             touchHelper = new ItemTouchHelper(callback);
                             touchHelper.attachToRecyclerView(rvQueue);
 
+                            resetTimer = true;
+                            initialStage = true;
+                            playing = false;
+
                             ImageButton previous = view.findViewById(R.id.ibPrevious);
                             previous.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -263,6 +286,23 @@ public class PlayFragment extends Fragment {
                                         source = episode.makeLink();
                                         txtEpisodeTitle.setText(episode.getTitle());
                                         txtTotalTime.setText(episode.makeDurationText());
+                                        //Log.d("Current Source")
+                                        //mService.resetAudio();
+                                        mService.pauseAudio();
+                                        audio.setImageResource(R.drawable.ic_play_arrow_24dp);
+                                        resetTimer = true;
+                                        //new Player().execute(source);
+
+                                        //mService.seekToAudio(0);
+                                        /*seekBar.setMax(episode.getDuration() * 1000);
+                                        int milliseconds = mService.getCurrentAudio();
+                                        long minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
+                                        txtCurrentTime.setText(String.format(Locale.getDefault(), "%d:%02d",
+                                                minutes, TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                                                        TimeUnit.MINUTES.toSeconds(minutes)
+                                        ));
+                                        seekBar.setProgress(mService.getCurrentAudio());*/
+                                        //seekBar.setProgress(0);
                                         adapter.notifyDataSetChanged();
                                         user = FirebaseAuth.getInstance().getCurrentUser();
                                         if(user != null) {
@@ -285,6 +325,24 @@ public class PlayFragment extends Fragment {
                                         source = episode.makeLink();
                                         txtEpisodeTitle.setText(episode.getTitle());
                                         txtTotalTime.setText(episode.makeDurationText());
+                                        mService.pauseAudio();
+                                        audio.setImageResource(R.drawable.ic_play_arrow_24dp);
+                                        //mService.resetAudio();
+                                        resetTimer = true;
+                                        //new Player().execute(source);
+
+                                        //seekBar.setMax(episode.getDuration() * 1000);
+                                        /*int milliseconds = mService.getCurrentAudio();
+                                        long minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
+                                        txtCurrentTime.setText(String.format(Locale.getDefault(), "%d:%02d",
+                                                minutes, TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                                                        TimeUnit.MINUTES.toSeconds(minutes)
+                                        ));*/
+                                        //seekBar.setProgress(mService.getCurrentAudio());
+                                        //audio.setImageResource(R.drawable.ic_pause_24dp);
+
+                                        //seekBar.setProgress(0);
+                                        //new Player().execute(source);
                                         adapter.notifyDataSetChanged();
                                         user = FirebaseAuth.getInstance().getCurrentUser();
                                         if(user != null) {
@@ -347,8 +405,10 @@ public class PlayFragment extends Fragment {
                                                         minutes, currentTime -
                                                                 TimeUnit.MINUTES.toSeconds(minutes)
                                                 ));
+                                                //mService.seekToAudio(currentTime);
                                             }
-                                            /*TODO: Seek to current time*/
+
+                                            /*TODO: Seek to current time - DONE??*/
                                         }
                                         else {
                                             ibLeftPodcast.setImageResource(R.drawable.ic_diamond_filled_24dp);
@@ -358,9 +418,13 @@ public class PlayFragment extends Fragment {
                                                 if (playedStatus == null || playedStatus == 1) {
                                                     episodePlayed.child("playedStatus").setValue(2);
                                                     /*TODO: Skip to next episode, if last episode seekto end*/
+                                                    //mService.seekToAudio(mService.getDurationAudio());
+
+
                                                 } else {
                                                     episodePlayed.removeValue();
                                                     /*TODO: Seek episode to zero and pause playback*/
+                                                    mService.seekToAudio(0);
                                                 }
                                             }
                                         });
@@ -374,6 +438,9 @@ public class PlayFragment extends Fragment {
                 public void onCancelled(DatabaseError databaseError) {}
             });
         }
+        Log.i("OnStart", "MainActivity - onStart-binding");
+        doBindToService();
+        //mService.resetAudio();
     }
 
     class LoadImageTask extends AsyncTask<URL, Void, Bitmap> {
@@ -408,19 +475,57 @@ public class PlayFragment extends Fragment {
         protected Boolean doInBackground(String... strings){
             int milliseconds;
             long minutes;
-            while(mediaPlayer != null){
-                milliseconds = mediaPlayer.getCurrentPosition();
+            while(!resetTimer){
+                /*milliseconds = mService.getCurrentAudio();
                 minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
                 txtCurrentTime.setText(String.format(Locale.getDefault(), "%d:%02d",
                         minutes, TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
                                 TimeUnit.MINUTES.toSeconds(minutes)
-                ));
+                ));*/
 
+
+                /*TODO the real stuff*/
+
+                if(mService.isPlaying()) {
+                    milliseconds = mService.getCurrentAudio();
+                    minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
+                    txtCurrentTime.setText(String.format(Locale.getDefault(), "%d:%02d",
+                            minutes, TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                                    TimeUnit.MINUTES.toSeconds(minutes)
+                    ));
+
+                }
+                seekBar.setProgress(mService.getCurrentAudio());
+                handler.postDelayed(runnable, 1000);
+
+                    /*TODO ***************** */
+
+
+                    /*if (mService.getCurrentAudio() >= mService.getDurationAudio()){
+                        if(currentEpisode + 1 < queue.size()) {
+                            currentEpisode++;
+                            // initialStage = true; //some other stuff necessary probably
+                            Episode episode = queue.get(currentEpisode);
+                            source = episode.makeLink();
+                            txtEpisodeTitle.setText(episode.getTitle());
+                            txtTotalTime.setText(episode.makeDurationText());
+                            mService.resetAudio(source.toString());
+                            //new Player().execute(source);
+                            adapter.notifyDataSetChanged();
+                            user = FirebaseAuth.getInstance().getCurrentUser();
+                            if(user != null) {
+                                DatabaseReference userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+                                userData.child("Queue").child("currentEpisode").setValue(currentEpisode);
+                            }
+                        }
+                    }*/
+                }
+                /*
                 if (mediaPlayer.isPlaying()){
                     seekBar.setProgress(mediaPlayer.getCurrentPosition());
                     handler.postDelayed(runnable, 1000);
-                }
-            }
+                }*/
+            //}
             return false;
         }
 
@@ -431,16 +536,22 @@ public class PlayFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(URL... urls){
-            Boolean prepared;
-            try {
+            Boolean prepared = false;
+            //try {
 
                 Log.d("Play", "source url: " + urls[0].getPath());
 
-                mediaPlayer.setDataSource(urls[0].toString());
+                /*if (mService.isNull() != null){
+                    mService.resetAudio(urls[0].toString());
+                    prepared = true;
+                }*/
+                //else {
 
-                prepared = false;
+            /*TODO My thing*/
+            prepared = mService.initPlayer(urls[0].toString());
 
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+                /*mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
                         initialStage = true;
@@ -449,20 +560,9 @@ public class PlayFragment extends Fragment {
                         mediaPlayer.stop();
                         mediaPlayer.reset();
                     }
-                });
+                });*/
 
-                try {
-                    mediaPlayer.prepare();
-                    prepared = true;
 
-                } catch (IOException e) {
-                    Log.e("PlayFragment", Log.getStackTraceString(e));
-                }
-
-            }catch(IOException e){
-                e.printStackTrace();
-                prepared = false;
-            }
             return prepared;
 
         }
@@ -471,19 +571,21 @@ public class PlayFragment extends Fragment {
         protected void onPostExecute(Boolean aBoolean){
             super.onPostExecute(aBoolean);
 
-            int milliseconds = mediaPlayer.getDuration();
+            /*int milliseconds = mService.getDurationAudio();
             Log.d("TIME_SET", "in seconds" + TimeUnit.MILLISECONDS.toSeconds(milliseconds));
             Log.d("TIME_SET", "in hours" + TimeUnit.HOURS.toSeconds(TimeUnit.MILLISECONDS.toHours(milliseconds)));
-            Log.d("TIME_SET", "in minutes" + TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
+            Log.d("TIME_SET", "in minutes" + TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds)));*/
 
-            seekBar.setMax(mediaPlayer.getDuration());
+            seekBar.setMax(mService.getDurationAudio());
+            resetTimer = false;
             new Time().execute();
 
             if(progressDialog.isShowing()){
                 progressDialog.cancel();
             }
            initialStage = false;
-            mediaPlayer.start();
+            //playing = true;
+            mService.startAudio();
 
         }
 
@@ -545,6 +647,13 @@ public class PlayFragment extends Fragment {
                     source = episode.makeLink();
                     txtEpisodeTitleInner.setText(episode.getTitle());
                     txtTotalTimeInner.setText(episode.makeDurationText());
+
+                    //mService.resetAudio();
+                    //new Player().execute(source);
+                    mService.pauseAudio();
+                    audio.setImageResource(R.drawable.ic_play_arrow_24dp);
+                    resetTimer = true;
+
                     adapter.notifyDataSetChanged();
                     user = FirebaseAuth.getInstance().getCurrentUser();
                     if(user != null) {
@@ -620,6 +729,69 @@ public class PlayFragment extends Fragment {
         ViewHolder(View v) {
             super(v);
             view = v;
+        }
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.i("OnStop", "MainActivity - onStop - unbinding");
+
+        //Intent intentStopService = new Intent(getActivity(), PlayService.class);
+        //getActivity().stopService(intentStopService);
+        doUnbindService();
+        //mService.resetAudio(source.toString());
+        mBound = false;
+
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+
+            Log.i("ServiceConnection", "Bound service connected");
+            mService = ((PlayService.LocalBinder) service).getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mService = null;
+            mBound = false;
+        }
+    };
+
+    private void doUnbindService(){
+        //Toast.makeText(getActivity(), "UnBinding...", Toast.LENGTH_SHORT).show();
+        getActivity().unbindService(mConnection);
+        //mService.seekToAudio(mService.getDurationAudio());
+       // mService.pauseAudio();
+
+    }
+
+    private void doBindToService() {
+        //Toast.makeText(getActivity(), "Binding...", Toast.LENGTH_SHORT).show();
+        if (!mBound) {
+            Intent bindIntent = new Intent(getActivity(), PlayService.class);
+            bindIntent.putExtra("DATA_SOURCE", source);
+
+            getActivity().startService(bindIntent);
+            getActivity().bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);
+        }
+
+    }
+
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i("OnDestroy", "Destroying activity...");
+        if (getActivity().isFinishing()){
+            Log.i("OnDestroy", "activity is finishing");
+            Intent intentStopService = new Intent(getActivity(), PlayService.class);
+            getActivity().stopService(intentStopService);
+            doUnbindService();
         }
     }
 }
