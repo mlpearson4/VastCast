@@ -2,9 +2,7 @@
 
 # VastCast - A Vastly Superior Podcast App
 
-VastCast is a Podcast App that allows users to play podcasts, load their favorite podcasts, organize their queue of podcasts, search for podcasts, and upload and download podcasts for offline listening.
-
-**In progress:** Download Podcasts, Play in background after exitting the application
+VastCast is a Podcast App that allows users to play podcasts, load their favorite podcasts, organize their queue of podcasts, and search for podcasts.
 
 ## Importance
 
@@ -25,5 +23,7 @@ VastCast was designed to operate in a straightforward and user friendly manner. 
 To play a podcast, a user simply needs to click the play button. Once clicked, the user can listen to the podcast straight through, use the seek bar to select a location, skip ahead by either 5, 10, or 30 seconds, or click the next button to advance to the next podcast. The skip time can be controlled in settings. The settings menu also allows a user to log-out of our application.
 
 VastCast also offers a search menu where users can search for a podcast title using either whole words or portions of words. Search is not case-sensitive.
+
+**Future Work:** The ability to continue play while the app is running in the background.
 
 [![VastCast Video](https://github.com/mlpearson4/VastCast/blob/master/pictures/vid_screen_with_bar.JPG)](https://youtu.be/z5pGnDHEjq8 "VastCast Video")
