@@ -2,17 +2,17 @@ package com.vastcast.vastcast;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import 	android.preference.PreferenceManager;
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import android.preference.Preference;
 
 public class SettingsActivity extends PreferenceActivity {
 
@@ -31,11 +31,10 @@ public class SettingsActivity extends PreferenceActivity {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                // TODO Auto-generated method stub
                 FirebaseAuth.getInstance().signOut();
                 Log.d("SettingsActivity", "Logout button pressed");
                 Intent i = new Intent(SettingsActivity.this, LoginActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                //i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 SettingsActivity.this.startActivity(i);
                 return false;
             }
@@ -44,15 +43,6 @@ public class SettingsActivity extends PreferenceActivity {
         OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sp, String key) {
                 user = FirebaseAuth.getInstance().getCurrentUser();
-                /*Boolean test = (key.equals("autoplay_preference"));
-                if(key.equals("autoplay_preference")) {
-                    Boolean preference_autoplay = sp.getBoolean("autoplay_preference", false);
-                    if(user != null) {
-                        userData = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
-                        userData.child("Settings").child("autoplay").setValue(preference_autoplay);
-                    }
-                }
-                else*/
                 if(key.equals("skipper_preference")) {
                     String preference_skipper = sp.getString("skipper_preference", "30");
 
