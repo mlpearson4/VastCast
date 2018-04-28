@@ -2,6 +2,7 @@
 
 ## Deliverables
 Our [Google Drive](https://goo.gl/QEAhwU) contains our documentation and presentation deliverables. 
+
 Our **APK release** can be found [here](https://github.com/mlpearson4/VastCast/blob/master/app-release.apk) and is also located in the main directory of our github.
 
 ### Documentation
